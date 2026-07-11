@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeGrader - Correção de Código</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="cabecalho">
+        <div class="logo-codegrader">📚 CodeGrader</div>
+        <div class="botoes-autenticacao">
+            <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
+            <button class="botao botao-secundario" id="botao-entrar">Entrar</button>
+            <button class="botao" id="botao-cadastrar">Cadastrar</button>
+        </div>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="contenedor-principal">
+        <!-- SIDEBAR -->
+        <aside class="barra-lateral">
+            <div class="secao-barra">
+                <div class="titulo-secao">Submissões</div>
+                <div id="lista-submissoes">
+                    <div class="item-submissao ativo" data-id-submissao="sub-001">
+                        <div class="nome-arquivo">soma_vetor.c</div>
+                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Ana Beatriz</div>
+                    </div>
+                    <div class="item-submissao" data-id-submissao="sub-002">
+                        <div class="nome-arquivo">fatorial.c</div>
+                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Ana Beatriz</div>
+                    </div>
+                    <div class="item-submissao" data-id-submissao="sub-003">
+                        <div class="nome-arquivo">busca.c</div>
+                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Bruno Carvalho</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-usuario">
+                <div class="titulo-secao">Informações do Estudante</div>
+                <div class="label-info">Nome</div>
+                <div class="valor-info" id="nome-usuario">Ana Beatriz Lima</div>
+
+                <div class="label-info">Matrícula</div>
+                <div class="valor-info" id="matricula-usuario">2823118045</div>
+
+                <div class="label-info">Turma</div>
+                <div class="valor-info" id="turma-usuario">ENG-COMP 2A</div>
+
+                <div class="label-info">Nota Atual</div>
+                <div class="nota-atual" id="nota-usuario">9.8</div>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="area-conteudo">
+            <!-- FAIXA SUPERIOR -->
+            <div class="faixa-superior">
+                <h1 class="titulo-problema">Problema 01 - Soma de Vetor</h1>
+                <div class="botoes-navegacao">
+                    <button class="botao botao-secundario">← Anterior</button>
+                    <button class="botao botao-secundario">Próximo →</button>
+                </div>
+            </div>
+
+            <!-- ÁREA DE CÓDIGO -->
+            <div class="area-codigo">
+                <!-- PAINEL DO CÓDIGO DO ALUNO -->
+                <div class="painel-codigo">
+                    <div class="cabecalho-painel">CÓDIGO DO ALUNO</div>
+                    <div class="conteudo-codigo" id="codigo-aluno">
+                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;</div>
+                        <div class="linha-codigo"></div>
+                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
+                                class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
+                                class="palavra-chave">int</span> n) {</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
+                            <span class="numero">0</span>;
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
+                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
+                            total;</div>
+                        <div class="linha-codigo">}</div>
+                        <div class="linha-codigo"></div>
+                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
+                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
+                                class="string">"%d"</span>, &amp;n);</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
+                                class="numero">100</span>];</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
+                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
+                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
+                            <span class="numero">0</span>;
+                        </div>
+                        <div class="linha-codigo">}</div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DO GABARITO -->
+                <div class="painel-codigo">
+                    <div class="cabecalho-painel">Gabarito</div>
+                    <div class="conteudo-codigo" id="codigo-gabarito">
+                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;</div>
+                        <div class="linha-codigo"></div>
+                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
+                                class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
+                                class="palavra-chave">int</span> n) {</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
+                            <span class="numero">0</span>;
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
+                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
+                            total;</div>
+                        <div class="linha-codigo">}</div>
+                        <div class="linha-codigo"></div>
+                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
+                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
+                                class="string">"%d"</span>, &amp;n);</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
+                                class="numero">100</span>];</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
+                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
+                        </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
+                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));</div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
+                            <span class="numero">0</span>;
+                        </div>
+                        <div class="linha-codigo">}</div>
+                    </div>
+                </div>
+
+                <!-- PAINEL DE ANÁLISE -->
+                <div class="painel-analise">
+                    <div class="abas-analise">
+                        <div class="aba ativa" data-aba="alertas">Alertas</div>
+                        <div class="aba" data-aba="comandos">Comandos Proibidos</div>
+                        <div class="aba" data-aba="historico">Histórico de Plágio</div>
+                    </div>
+
+                    <!-- ABA ALERTAS -->
+                    <div id="alertas" class="conteudo-aba visivel">
+                        <div class="alerta-vazio">
+                            Nenhum alerta gerado para este arquivo.
+                        </div>
+                    </div>
+
+                    <!-- ABA COMANDOS -->
+                    <div id="comandos" class="conteudo-aba">
+                        <div class="alerta-vazio">
+                            Nenhum comando proibido detectado.
+                        </div>
+                    </div>
+
+                    <!-- ABA HISTÓRICO -->
+                    <div id="historico" class="conteudo-aba">
+                        <div class="alerta-vazio">
+                            Sem histórico de plágio.
+                        </div>
+                    </div>
+
+                    <!-- PAINEL DE NOTAS -->
+                    <div class="painel-notas">
+                        <div class="secao-nota">
+                            <div class="titulo-nota">Nota DREDD</div>
+                            <div class="caixa-notas">10.0</div>
+                        </div>
+
+                        <div class="secao-nota">
+                            <div class="titulo-nota">Nota Manual</div>
+                            <input type="number" class="campo-nota" id="nota-manual-input" placeholder="—" min="0"
+                                max="10" step="0.1">
+                        </div>
+
+                        <div class="secao-nota">
+                            <div class="titulo-nota">Nota Final</div>
+                            <div class="caixa-notas">10.0</div>
+                        </div>
+
+                        <div class="secao-nota">
+                            <div class="titulo-nota">Justificativa</div>
+                            <div class="area-justificativa">
+                                <textarea class="textarea-justificativa" id="justificativa-correcao"
+                                    placeholder="Comentário sobre a correção..."></textarea>
+                            </div>
+                        </div>
+
+                        <button class="botao"
+                            style="margin-top: 0.75rem; background-color: var(--cor-verde); padding: 0.6rem;">💾
+                            Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ENTRAR -->
+    <div class="overlay-modal" id="modal-entrar">
+        <div class="caixa-modal">
+            <div class="titulo-modal">
+                Entrar
+                <button class="fechar-modal" data-modal="entrar">×</button>
+            </div>
+            <p class="descricao-modal">
+                Acesse sua conta de professor para salvar correções.
+            </p>
+
+            <form id="formulario-entrar">
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">E-mail</label>
+                    <input type="email" class="campo-entrada" id="email-entrar" placeholder="professor@universidade.edu"
+                        required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Senha</label>
+                    <input type="password" class="campo-entrada" id="senha-entrar" placeholder="Sua senha" required>
+                </div>
+
+                <button type="submit" class="botao">Entrar</button>
+            </form>
+
+            <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
+                Não tem conta? <a class="link-autenticacao" id="link-cadastro">Criar conta</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRAR -->
+    <div class="overlay-modal" id="modal-cadastrar">
+        <div class="caixa-modal">
+            <div class="titulo-modal">
+                Criar conta
+                <button class="fechar-modal" data-modal="cadastrar">×</button>
+            </div>
+            <p class="descricao-modal">
+                Cadastre-se para gerenciar e corrigir provas.
+            </p>
+
+            <form id="formulario-cadastrar">
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Nome completo</label>
+                    <input type="text" class="campo-entrada" id="nome-cadastro" placeholder="Maria Souza" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">E-mail</label>
+                    <input type="email" class="campo-entrada" id="email-cadastro"
+                        placeholder="professor@universidade.edu" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Senha</label>
+                    <input type="password" class="campo-entrada" id="senha-cadastro" placeholder="Mínimo 8 caracteres"
+                        required>
+                </div>
+
+                <button type="submit" class="botao">Criar conta</button>
+            </form>
+
+            <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
+                Já tem conta? <a class="link-autenticacao" id="link-entrar">Entrar</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
+    <div class="overlay-modal" id="modal-sobre">
+        <div class="caixa-modal modal-instrucoes">
+            <div class="titulo-modal">
+                Como organizar as pastas
+                <button class="fechar-modal" data-modal="sobre">×</button>
+            </div>
+
+            <p class="descricao-modal">
+                O CodeGrader espera uma estrutura de pastas específica para associar cada submissão ao seu gabarito
+                automaticamente.
+            </p>
+
+            <div class="secao-instrucoes">
+                <div class="numero-instrucao">1. Pasta raiz da prova</div>
+                <div class="texto-instrucao">
+                    Crie uma pasta para a prova (ex.: <code>prova-01/</code>). Dentro dela ficam duas subpastas
+                    obrigatórias: <code>submissoes/</code> e <code>gabaritos/</code>.
+                </div>
+            </div>
+
+            <div class="secao-instrucoes">
+                <div class="numero-instrucao">2. Submissões por aluno</div>
+                <div class="texto-instrucao">
+                    Em <code>submissoes/</code>, crie uma pasta por aluno usando a matrícula ou o nome. Cada arquivo
+                    deve começar com um cabeçalho de identificação seguido do código.
+                </div>
+            </div>
+
+            <div class="secao-instrucoes">
+                <div class="numero-instrucao">3. Gabaritos por problema</div>
+                <div class="texto-instrucao">
+                    Em <code>gabaritos/</code>, salve um arquivo por problema. O nome do arquivo deve corresponder ao
+                    identificador do problema presente no cabeçalho da submissão (ex.: <code>p01</code>).
+                </div>
+            </div>
+
+            <div class="estrutura-esperada">
+                prova-01/
+                ├── submissoes/
+                │ ├── ana-silva/
+                │ │ ├── p01.c
+                │ │ └── p02.c
+                │ ├── bruno-costa/
+                │ │ ├── p01.c
+                │ │ └── p03.c
+                │ |── carla-souza/
+                | ├── p01.c
+                │ ├── p02.c
+                │ └── p03.c
+                └── gabaritos/
+                ├── p01.c
+                ├── p02.c
+                └── p03.c
+            </div>
+
+            <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>
