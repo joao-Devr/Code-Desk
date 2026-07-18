@@ -5,6 +5,6 @@ app_name="app"
 
 urlpatterns = [
 
-    path('',views.index_app,name="home"),
-    path('testeparametros/', views.testeparametros,name="parametros"),
+    path('codedesk/',views.codedesk,name="codedesk"),
+    #path('testeparametros/', views.testeparametros,name="parametros"),
 ]
