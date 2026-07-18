@@ -1,0 +1,54 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Login Code Desk</title>
+</head>
+<body>
+    <!-- MODAL DE ENTRAR -->
+    <div class="overlay-modal visivel">
+        <div class="caixa-modal">
+            <div class="titulo-modal">
+                Entrar  
+            </div>
+            <p class="descricao-modal">
+                Acesse sua conta de professor para salvar correções.
+            </p>
+
+            <form  action="{% url 'login' %}" method="POST">
+                {% csrf_token %}
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">E-mail</label>
+                    <input type="email" class="campo-entrada" name="email-entrar" placeholder="professor@universidade.edu"
+                        required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Senha</label>
+                    <input type="password" class="campo-entrada" name="senha-entrar" placeholder="Sua senha" required>
+                </div>
+
+                <button type="submit" class="botao">Entrar</button>
+            </form>
+                <br>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+
+            <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
+                Não tem conta? <a class="link-autenticacao" href="{% url 'cadastro' %}">Criar conta</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

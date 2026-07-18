@@ -1,0 +1,75 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Cadastro - Code Desk</title>
+</head>
+<body>
+    <!-- MODAL DE CADASTRAR -->
+    <div class="overlay-modal visivel">
+        <div class="caixa-modal">
+            <div class="titulo-modal">
+                Criar conta
+            </div>
+            <p class="descricao-modal">
+                Cadastre-se para gerenciar e corrigir provas.
+            </p>
+
+            <form action="{% url 'cadastro' %}" method="POST" onsubmit="return validaSenha()">
+                {% csrf_token %}
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Nome completo</label>
+                    <input type="text" class="campo-entrada" id="nome" name="nome-cadastro"placeholder="Maria Souza" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">E-mail</label>
+                    <input type="email" class="campo-entrada" id="email" name="email-cadastro"
+                        placeholder="professor@universidade.edu" required>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label class="rotulo-campo">Senha</label>
+                    <input type="password" class="campo-entrada" id="senha"  name="senha-cadastro" placeholder="Mínimo 8 caracteres"
+                        required>
+                </div>
+
+                <button type="submit" class="botao">Criar conta</button>
+            </form>
+                <br>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+            <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
+                Já tem conta? <a class="link-autenticacao" href="{% url 'login' %}" >Entrar</a>
+            </div>
+        </div>
+    </div>
+    
+
+<script>
+    function validaSenha() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm_password").value;
+            const errorDiv = document.getElementById("passwordError");
+
+            if (password !== confirmPassword) {
+                errorDiv.style.display = "block";
+                return false; // Impede o envio do formulário
+            } else {
+                errorDiv.style.display = "none";
+                return true; // Permite o envio do formulário
+            }
+        }
+</script>
+</body>
+</html>
