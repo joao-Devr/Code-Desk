@@ -7,9 +7,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login as login_django
 from django.contrib.auth import logout as logout_django
 
-def logout(request):
-    logout_django(request)
-    return render(request, 'login.html')
+
 
 def login(request):
 
@@ -53,4 +51,8 @@ def cadastro(request):
         user = User.objects.create_user(username=usuario, email=email, password=senha)
         user.save()
         
-        return redirect('login')
+        return redirect('usuario:login')
+    
+def logout(request):
+    logout_django(request)
+    return redirect('usuario:login')  # Redireciona para a página de login após o logout

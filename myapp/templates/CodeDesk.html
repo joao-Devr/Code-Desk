@@ -16,8 +16,13 @@
         <div class="logo-codegrader">📚 CodeGrader</div>
         <div class="botoes-autenticacao">
             <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
-            <button class="botao botao-secundario" id="botao-entrar">Entrar</button>
-            <button class="botao" id="botao-cadastrar">Cadastrar</button>
+            {% if user.is_authenticated %}
+                <a class="botao botao-secundario" style="margin-left: auto;" href="#">{{ user.username }}</a>
+                <a class="botao botao-secundario" style="margin-left: 1rem;" href="{% url 'usuario:logout' %}">Sair</a>
+            {% else %}
+                <a class="botao botao-secundario" href="{% url 'usuario:login' %}">Entrar</a>
+                <a class="botao" href="{% url 'usuario:cadastro' %}">Cadastrar</a>
+            {% endif %}
         </div>
     </header>
 
