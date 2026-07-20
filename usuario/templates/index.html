@@ -19,7 +19,7 @@
                 Acesse sua conta de professor para salvar correções.
             </p>
 
-            <form  action="{% url 'login' %}" method="POST">
+            <form  action="{% url 'usuario:login' %}" method="POST">
                 {% csrf_token %}
 
                 <div class="grupo-formulario">
@@ -46,7 +46,7 @@
 
 
             <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
-                Não tem conta? <a class="link-autenticacao" href="{% url 'cadastro' %}">Criar conta</a>
+                Não tem conta? <a class="link-autenticacao" href="{% url 'usuario:cadastro' %}">Criar conta</a>
             </div>
         </div>
     </div>

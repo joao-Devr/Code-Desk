@@ -6,5 +6,4 @@ app_name="app"
 urlpatterns = [
 
     path('codedesk/',views.codedesk,name="codedesk"),
-    #path('testeparametros/', views.testeparametros,name="parametros"),
 ]

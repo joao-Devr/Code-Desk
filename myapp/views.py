@@ -5,5 +5,4 @@ from django.http import HttpResponse
 
 
 def codedesk(request):
-    template = loader.get_template('CodeDesk.html')
-    return HttpResponse(template.render())
+   return render(request, 'CodeDesk.html')

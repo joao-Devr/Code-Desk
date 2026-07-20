@@ -19,7 +19,7 @@
                 Cadastre-se para gerenciar e corrigir provas.
             </p>
 
-            <form action="{% url 'cadastro' %}" method="POST" onsubmit="return validaSenha()">
+            <form action="{% url 'usuario:cadastro' %}" method="POST" onsubmit="return validaSenha()">
                 {% csrf_token %}
                 <div class="grupo-formulario">
                     <label class="rotulo-campo">Nome completo</label>
@@ -50,7 +50,7 @@
                     {% endif %}
 
             <div style="margin-top: 1rem; text-align: center; color: var(--cor-texto-secundario); font-size: 0.9rem;">
-                Já tem conta? <a class="link-autenticacao" href="{% url 'login' %}" >Entrar</a>
+                Já tem conta? <a class="link-autenticacao" href="{% url 'usuario:login' %}" >Entrar</a>
             </div>
         </div>
     </div>

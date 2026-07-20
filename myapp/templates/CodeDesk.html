@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeGrader - Correção de Código</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
 <body>
@@ -16,13 +16,19 @@
         <div class="logo-codegrader">📚 CodeGrader</div>
         <div class="botoes-autenticacao">
             <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
-            <button class="botao botao-secundario" id="botao-entrar">Entrar</button>
-            <button class="botao" id="botao-cadastrar">Cadastrar</button>
+            {% if user.is_authenticated %}
+                <a class="botao botao-secundario" style="margin-left: auto;" href="#">{{ user.username }}</a>
+                <a class="botao botao-secundario" style="margin-left: 1rem;" href="{% url 'usuario:logout' %}">Sair</a>
+            {% else %}
+                <a class="botao botao-secundario" href="{% url 'usuario:login' %}">Entrar</a>
+                <a class="botao" href="{% url 'usuario:cadastro' %}">Cadastrar</a>
+            {% endif %}
         </div>
     </header>
 
     <!-- LAYOUT PRINCIPAL -->
     <div class="contenedor-principal">
+
         <!-- SIDEBAR -->
         <aside class="barra-lateral">
             <div class="secao-barra">
@@ -61,6 +67,7 @@
 
         <!-- CONTEÚDO PRINCIPAL -->
         <div class="area-conteudo">
+
             <!-- FAIXA SUPERIOR -->
             <div class="faixa-superior">
                 <h1 class="titulo-problema">Problema 01 - Soma de Vetor</h1>
@@ -72,46 +79,75 @@
 
             <!-- ÁREA DE CÓDIGO -->
             <div class="area-codigo">
+
                 <!-- PAINEL DO CÓDIGO DO ALUNO -->
                 <div class="painel-codigo">
                     <div class="cabecalho-painel">CÓDIGO DO ALUNO</div>
                     <div class="conteudo-codigo" id="codigo-aluno">
                         <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;</div>
                         <div class="linha-codigo"></div>
+
                         <div class="linha-codigo"><span class="palavra-chave">int</span> <span
                                 class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
-                                class="palavra-chave">int</span> n) {</div>
+                                class="palavra-chave">int</span> n) {
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
                             <span class="numero">0</span>;
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
                                 class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
                         </div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];</div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
+                        </div>
+
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            total;</div>
+                            total;
+                        </div>
+
                         <div class="linha-codigo">}</div>
+
                         <div class="linha-codigo"></div>
+
                         <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {</div>
+                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
-                                class="string">"%d"</span>, &amp;n);</div>
+                                class="string">"%d"</span>, &amp;n);
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
-                                class="numero">100</span>];</div>
+                                class="numero">100</span>];
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
                                 class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);
+                        </div>
+
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
-                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));</div>
+                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
                             <span class="numero">0</span>;
                         </div>
+
                         <div class="linha-codigo">}</div>
                     </div>
                 </div>
@@ -119,40 +155,66 @@
                 <!-- PAINEL DO GABARITO -->
                 <div class="painel-codigo">
                     <div class="cabecalho-painel">Gabarito</div>
+
                     <div class="conteudo-codigo" id="codigo-gabarito">
-                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;</div>
+                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;  </div>
+
                         <div class="linha-codigo"></div>
+
                         <div class="linha-codigo"><span class="palavra-chave">int</span> <span
                                 class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
-                                class="palavra-chave">int</span> n) {</div>
+                                class="palavra-chave">int</span> n) {
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
                             <span class="numero">0</span>;
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
                                 class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
                         </div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];</div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
+                        </div>
+
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}     </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            total;</div>
+                            total;
+                        </div>
+
                         <div class="linha-codigo">}</div>
+
                         <div class="linha-codigo"></div>
+
                         <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {</div>
+                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
-                                class="string">"%d"</span>, &amp;n);</div>
+                                class="string">"%d"</span>, &amp;n);
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
-                                class="numero">100</span>];</div>
+                                class="numero">100</span>];
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
                                 class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
                         </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);</div>
+                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);
+                        </div>
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+                        
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
-                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));</div>
+                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
+                        </div>
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
                             <span class="numero">0</span>;
                         </div>
