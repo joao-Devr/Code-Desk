@@ -1,9 +1,9 @@
 from django.urls import path
 from . import views
 
-app_name="app"
+app_name="CodeDesk"
 
 urlpatterns = [
 
-    path('codedesk/',views.codedesk,name="codedesk"),
+    path('',views.codedesk,name="codedesk"),
 ]

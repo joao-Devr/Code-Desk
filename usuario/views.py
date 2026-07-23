@@ -25,7 +25,7 @@ def login(request):
         if user: # se o usuário for autenticado com sucesso vai para a rota do outro app  CodeDesk.html 
 
             login_django(request, user)
-            return redirect('app:codedesk')  # Redireciona para a rota do outro app
+            return redirect('CodeDesk:codedesk')  # Redireciona para a rota do outro app
         
         else: # se o usuário não for autenticado com sucesso
             messages.error(request, 'Usuário ou senha inválidos. Tente novamente.')
