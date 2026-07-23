@@ -110,3 +110,48 @@ if (botaoSalvar && notaManualInput && justificativaInput) {
         alert('Correção salva com sucesso!');
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleciona todos os arquivos listados na barra lateral
+    const itensSubmissao = document.querySelectorAll('.item-submissao');
+    const areaCodigoAluno = document.getElementById('codigo-aluno');
+    const nomeUsuarioPanel = document.getElementById('nome-usuario');
+
+    itensSubmissao.forEach(item => {
+        item.addEventListener('click', function() {
+            
+            // 1. Muda a cor de seleção (remove dos outros e coloca no clicado)
+            itensSubmissao.forEach(i => i.classList.remove('ativo'));
+            this.classList.add('ativo');
+
+            // 2. Pega os dados que guardamos nos atributos data-*
+            const codigo = this.getAttribute('data-codigo');
+            const aluno = this.getAttribute('data-aluno');
+
+            // 3. Atualiza o nome do aluno no painel "Informações do Estudante"
+            if (nomeUsuarioPanel) {
+                nomeUsuarioPanel.textContent = aluno;
+            }
+
+            // 4. Atualiza a tela preta de código no meio da página
+            if (areaCodigoAluno) {
+                // Limpa o código anterior
+                areaCodigoAluno.innerHTML = '';
+                
+                // Quebra o código recebido em linhas para manter a estética do seu CSS
+                const linhas = codigo.split('\n');
+                
+                linhas.forEach(linha => {
+                    const divLinha = document.createElement('div');
+                    divLinha.className = 'linha-codigo';
+                    
+                    // Usamos textContent para evitar injeção de HTML/XSS (muito seguro)
+                    // e preservar a indentação original
+                    divLinha.textContent = linha || ' '; 
+                    
+                    areaCodigoAluno.appendChild(divLinha);
+                });
+            }
+        });
+    });
+});

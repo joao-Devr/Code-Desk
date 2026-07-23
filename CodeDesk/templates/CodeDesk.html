@@ -33,22 +33,61 @@
         <aside class="barra-lateral">
             <div class="secao-barra">
                 <div class="titulo-secao">Submissões</div>
-                <div id="lista-submissoes">
-                    <div class="item-submissao ativo" data-id-submissao="sub-001">
-                        <div class="nome-arquivo">soma_vetor.c</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Ana Beatriz</div>
-                    </div>
-                    <div class="item-submissao" data-id-submissao="sub-002">
-                        <div class="nome-arquivo">fatorial.c</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Ana Beatriz</div>
-                    </div>
-                    <div class="item-submissao" data-id-submissao="sub-003">
-                        <div class="nome-arquivo">busca.c</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Bruno Carvalho</div>
-                    </div>
-                </div>
-            </div>
+                
+                <!-- INÍCIO DA CONDICIONAL -->
+                {% if not alunos %}
+                    <!-- SE NÃO HOUVER ALUNOS (NENHUM ZIP ENVIADO), MOSTRA O FORMULÁRIO -->
+                    <div style="padding: 15px; background-color: var(--cor-fundo-app); border: 1px dashed var(--cor-borda); border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin-bottom: 10px; font-size: 0.9rem; color: var(--cor-texto-primario);">Enviar Correções</h4>
+                        
+                        {% if erro %}
+                            <div style="color: #e74c3c; font-size: 0.8rem; margin-bottom: 10px; padding: 5px; background: #fadbd8; border-radius: 4px;">
+                                {{ erro }}
+                            </div>
+                        {% endif %}
 
+                        <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 10px;">
+                            {% csrf_token %}
+                            <label for="arquivo_zip" style="font-size: 0.8rem; color: var(--cor-texto-secundario);">Selecione o arquivo .zip:</label>
+                            <input type="file" name="arquivo_zip" id="arquivo_zip" accept=".zip" required style="font-size: 0.8rem;">
+                            <button type="submit" class="botao" style="font-size: 0.8rem; padding: 8px;">Processar ZIP</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <!-- SE HOUVER ALUNOS (ZIP ENVIADO E PROCESSADO), MOSTRA A LISTA -->
+                    <div id="lista-submissoes">
+                        
+                        <!-- Botão para limpar/enviar novo arquivo -->
+                        <div style="margin-bottom: 15px;">
+                             <!-- O link redireciona para a mesma página via GET, limpando o POST -->
+                            <a href="{% url 'CodeDesk:codedesk' %}" class="botao botao-secundario" style="font-size: 0.8rem; width: 100%; display: block; text-align: center; box-sizing: border-box;">Carregar nova prova</a>
+                        </div>
+
+                        <!-- Loop nos alunos carregados da memória -->
+                        {% for nome_aluno, arquivos in alunos.items %}
+                            <!-- Nome do Aluno como uma "Pasta" -->
+                            <div style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
+                                📁 {{ nome_aluno|title }}
+                            </div>
+                            
+                            <!-- Loop nos arquivos desse aluno -->
+                            {% for item in arquivos %}
+                                <!-- Adicionamos atributos data-* para o JS poder capturar o código mais tarde -->
+                                <div class="item-submissao" 
+                                     data-id-submissao="sub-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                                     data-aluno="{{ nome_aluno|title }}"
+                                     data-codigo="{{ item.codigo|escape }}">
+                                    
+                                    <div class="nome-arquivo">📄 {{ item.arquivo }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Questão</div>
+                                </div>
+                            {% endfor %}
+                            
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <!-- FIM DA CONDICIONAL -->
+                </div>
             <div class="info-usuario">
                 <div class="titulo-secao">Informações do Estudante</div>
                 <div class="label-info">Nome</div>
