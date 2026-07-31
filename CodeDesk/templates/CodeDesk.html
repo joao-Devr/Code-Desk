@@ -17,11 +17,11 @@
         <div class="botoes-autenticacao">
             <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
             {% if user.is_authenticated %}
-                <a class="botao botao-secundario" style="margin-left: auto;" href="#">{{ user.username }}</a>
-                <a class="botao botao-secundario" style="margin-left: 1rem;" href="{% url 'usuario:logout' %}">Sair</a>
+            <a class="botao botao-secundario" style="margin-left: auto;" href="#">{{ user.username }}</a>
+            <a class="botao botao-secundario" style="margin-left: 1rem;" href="{% url 'usuario:logout' %}">Sair</a>
             {% else %}
-                <a class="botao botao-secundario" href="{% url 'usuario:login' %}">Entrar</a>
-                <a class="botao" href="{% url 'usuario:cadastro' %}">Cadastrar</a>
+            <a class="botao botao-secundario" href="{% url 'usuario:login' %}">Entrar</a>
+            <a class="botao" href="{% url 'usuario:cadastro' %}">Cadastrar</a>
             {% endif %}
         </div>
     </header>
@@ -33,61 +33,81 @@
         <aside class="barra-lateral">
             <div class="secao-barra">
                 <div class="titulo-secao">Submissões</div>
-                
+
                 <!-- INÍCIO DA CONDICIONAL -->
                 {% if not alunos %}
-                    <!-- SE NÃO HOUVER ALUNOS (NENHUM ZIP ENVIADO), MOSTRA O FORMULÁRIO -->
-                    <div style="padding: 15px; background-color: var(--cor-fundo-app); border: 1px dashed var(--cor-borda); border-radius: 8px; margin-bottom: 20px;">
-                        <h4 style="margin-bottom: 10px; font-size: 0.9rem; color: var(--cor-texto-primario);">Enviar Correções</h4>
-                        
-                        {% if erro %}
-                            <div style="color: #e74c3c; font-size: 0.8rem; margin-bottom: 10px; padding: 5px; background: #fadbd8; border-radius: 4px;">
-                                {{ erro }}
-                            </div>
-                        {% endif %}
+                <!-- SE NÃO HOUVER NENHUM ZIP ENVIADO, MOSTRA O FORMULÁRIO -->
+                <div
+                    style="background-color: var(--cor-fundo-primario); border: 2px dashed var(--cor-borda); border-radius: var(--raio-borda); padding: 1.5rem 1rem; margin-bottom: 1.5rem; text-align: center;">
 
-                        <form method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 10px;">
-                            {% csrf_token %}
-                            <label for="arquivo_zip" style="font-size: 0.8rem; color: var(--cor-texto-secundario);">Selecione o arquivo .zip:</label>
-                            <input type="file" name="arquivo_zip" id="arquivo_zip" accept=".zip" required style="font-size: 0.8rem;">
-                            <button type="submit" class="botao" style="font-size: 0.8rem; padding: 8px;">Processar ZIP</button>
-                        </form>
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem; opacity: 0.8;">📁</div>
+                    <h4
+                        style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--cor-texto-primario); font-weight: 600;">
+                        Carregar Submissões</h4>
+
+                    {% if erro %}
+                    <div class="alerta-item"
+                        style="text-align: left; margin-bottom: 1rem; color: var(--cor-texto-primario);">
+                        {{ erro }}
                     </div>
-                {% else %}
-                    <!-- SE HOUVER ALUNOS (ZIP ENVIADO E PROCESSADO), MOSTRA A LISTA -->
-                    <div id="lista-submissoes">
-                        
-                        <!-- Botão para limpar/enviar novo arquivo -->
-                        <div style="margin-bottom: 15px;">
-                             <!-- O link redireciona para a mesma página via GET, limpando o POST -->
-                            <a href="{% url 'CodeDesk:codedesk' %}" class="botao botao-secundario" style="font-size: 0.8rem; width: 100%; display: block; text-align: center; box-sizing: border-box;">Carregar nova prova</a>
+                    {% endif %}
+
+                    <form method="POST" enctype="multipart/form-data"
+                        style="display: flex; flex-direction: column; gap: 1rem; text-align: left;">
+                        {% csrf_token %}
+
+                        <div class="grupo-formulario" style="margin-bottom: 0;">
+                            <label for="arquivo_zip" class="rotulo-campo">Arquivo .zip da prova:</label>
+
+                            <input type="file" name="arquivo_zip" id="arquivo_zip" accept=".zip" required
+                                class="campo-entrada" style="padding: 0.5rem; cursor: pointer;">
                         </div>
 
-                        <!-- Loop nos alunos carregados da memória -->
-                        {% for nome_aluno, arquivos in alunos.items %}
-                            <!-- Nome do Aluno como uma "Pasta" -->
-                            <div style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
-                                📁 {{ nome_aluno|title }}
-                            </div>
-                            
-                            <!-- Loop nos arquivos desse aluno -->
-                            {% for item in arquivos %}
-                                <!-- Adicionamos atributos data-* para o JS poder capturar o código mais tarde -->
-                                <div class="item-submissao" 
-                                     data-id-submissao="sub-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
-                                     data-aluno="{{ nome_aluno|title }}"
-                                     data-codigo="{{ item.codigo|escape }}">
-                                    
-                                    <div class="nome-arquivo">📄 {{ item.arquivo }}</div>
-                                    <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Questão</div>
-                                </div>
-                            {% endfor %}
-                            
-                        {% endfor %}
+                        <!-- O botão principal azul do site -->
+                        <button type="submit" class="botao">Processar ZIP</button>
+                    </form>
+                </div>
+                {% else %}
+                <!-- SE HOUVER ALUNOS (ZIP ENVIADO E PROCESSADO), MOSTRA A LISTA -->
+                <div id="lista-submissoes">
+
+                    <!-- Botão para limpar/enviar novo arquivo -->
+                    <div style="margin-bottom: 15px;">
+
+                        <!-- O link redireciona para a mesma página via GET, limpando o POST -->
+                        <a href="{% url 'CodeDesk:codedesk' %}" class="botao botao-secundario"
+                            style="font-size: 0.8rem; width: 100%; display: block; text-align: center; box-sizing: border-box;">Carregar
+                            nova prova</a>
                     </div>
+
+                    <!-- Loop nos alunos carregados da memória -->
+                    {% for nome_aluno, arquivos in alunos.items %}
+
+                    <!-- Nome do Aluno como uma "Pasta" -->
+                    <div
+                        style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
+                        📁 {{ nome_aluno|title }}
+                    </div>
+
+                    <!-- Loop nos arquivos desse aluno -->
+                    {% for item in arquivos %}
+
+                    <!-- Adicionamos atributos data-* para o JS poder capturar o código mais tarde -->
+                    <div class="item-submissao"
+                        data-id-submissao="sub-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
+                        data-aluno="{{ nome_aluno|title }}" data-codigo="{{ item.codigo|escape }}">
+
+                        <div class="nome-arquivo">📄 {{ item.arquivo }}</div>
+                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Questão</div>
+                    </div>
+                    {% endfor %}
+
+                    {% endfor %}
+                </div>
                 {% endif %}
                 <!-- FIM DA CONDICIONAL -->
-                </div>
+            </div>
+
             <div class="info-usuario">
                 <div class="titulo-secao">Informações do Estudante</div>
                 <div class="label-info">Nome</div>
@@ -123,71 +143,12 @@
                 <div class="painel-codigo">
                     <div class="cabecalho-painel">CÓDIGO DO ALUNO</div>
                     <div class="conteudo-codigo" id="codigo-aluno">
-                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;</div>
-                        <div class="linha-codigo"></div>
 
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
-                                class="palavra-chave">int</span> n) {
+                        <!-- MENSAGEM INICIAL -->
+                        <div style="color: var(--cor-texto-terciario); text-align: center; margin-top: 2rem;">
+                            <h2>Selecione um arquivo na barra lateral para visualizar o código do aluno.</h2>
                         </div>
 
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
-                            <span class="numero">0</span>;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            total;
-                        </div>
-
-                        <div class="linha-codigo">}</div>
-
-                        <div class="linha-codigo"></div>
-
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
-                                class="string">"%d"</span>, &amp;n);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
-                                class="numero">100</span>];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
-                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            <span class="numero">0</span>;
-                        </div>
-
-                        <div class="linha-codigo">}</div>
                     </div>
                 </div>
 
@@ -196,7 +157,7 @@
                     <div class="cabecalho-painel">Gabarito</div>
 
                     <div class="conteudo-codigo" id="codigo-gabarito">
-                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt;  </div>
+                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt; </div>
 
                         <div class="linha-codigo"></div>
 
@@ -216,7 +177,7 @@
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
                         </div>
 
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}     </div>
+                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;} </div>
 
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
                             total;
@@ -250,7 +211,7 @@
                         </div>
 
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-                        
+
                         <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
                                 class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
                         </div>

@@ -61,17 +61,6 @@ document.querySelectorAll('.aba').forEach(aba => {
     });
 });
 
-// ===== GERENCIAMENTO DE SUBMISSÕES =====
-document.querySelectorAll('.item-submissao').forEach(item => {
-    item.addEventListener('click', () => {
-        document.querySelectorAll('.item-submissao').forEach(i => i.classList.remove('ativo'));
-        item.classList.add('ativo');
-
-        const idSubmissao = item.getAttribute('data-id-submissao');
-        console.log('Submissão selecionada:', idSubmissao);
-    });
-});
-
 // ===== FUNCIONALIDADE DO PAINEL DE NOTAS =====
 const notaManualInput = document.getElementById('nota-manual-input');
 const justificativaInput = document.getElementById('justificativa-correcao');
@@ -111,7 +100,11 @@ if (botaoSalvar && notaManualInput && justificativaInput) {
     });
 }
 
+
+// ===== FUNCIONALIDADE DE SELEÇÃO DE SUBMISSÃO E EXIBIÇÃO DE CÓDIGO =====
+
 document.addEventListener('DOMContentLoaded', function() {
+    
     // Seleciona todos os arquivos listados na barra lateral
     const itensSubmissao = document.querySelectorAll('.item-submissao');
     const areaCodigoAluno = document.getElementById('codigo-aluno');
