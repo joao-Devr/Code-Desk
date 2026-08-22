@@ -365,60 +365,52 @@
         </div>
     </div>
 
-    <!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
+<!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
     <div class="overlay-modal" id="modal-sobre">
         <div class="caixa-modal modal-instrucoes">
             <div class="titulo-modal">
-                Como organizar as pastas
+                Como formatar a submissão
                 <button class="fechar-modal" data-modal="sobre">×</button>
             </div>
 
             <p class="descricao-modal">
-                O CodeGrader espera uma estrutura de pastas específica para associar cada submissão ao seu gabarito
-                automaticamente.
+                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma pasta separada para os gabaritos da prova.
             </p>
 
             <div class="secao-instrucoes">
-                <div class="numero-instrucao">1. Pasta raiz da prova</div>
+                <div class="numero-instrucao">1. Pasta de Gabaritos (Obrigatório)</div>
                 <div class="texto-instrucao">
-                    Crie uma pasta para a prova (ex.: <code>prova-01/</code>). Dentro dela ficam duas subpastas
-                    obrigatórias: <code>submissoes/</code> e <code>gabaritos/</code>.
+                    O arquivo ZIP deve conter uma pasta chamada <code>gabaritos/</code>. Dentro dela, coloque as soluções esperadas para cada problema (ex.: <code>p01.c</code>, <code>p02.c</code>).
                 </div>
             </div>
 
             <div class="secao-instrucoes">
-                <div class="numero-instrucao">2. Submissões por aluno</div>
+                <div class="numero-instrucao">2. Arquivos dos Alunos (Padrão de Nome)</div>
                 <div class="texto-instrucao">
-                    Em <code>submissoes/</code>, crie uma pasta por aluno usando a matrícula ou o nome. Cada arquivo
-                    deve começar com um cabeçalho de identificação seguido do código.
+                    Os arquivos dos alunos podem estar organizados em pastas ou soltos no ZIP, mas <strong>precisam</strong> seguir o padrão: <code>a&lt;id&gt;q&lt;questao&gt;t&lt;tentativa&gt;.&lt;extensao&gt;</code>.<br>
+                    Exemplo: <strong>a042820q02t01.c</strong>.
                 </div>
             </div>
 
             <div class="secao-instrucoes">
-                <div class="numero-instrucao">3. Gabaritos por problema</div>
+                <div class="numero-instrucao">3. Cabeçalho de Metadados</div>
                 <div class="texto-instrucao">
-                    Em <code>gabaritos/</code>, salve um arquivo por problema. O nome do arquivo deve corresponder ao
-                    identificador do problema presente no cabeçalho da submissão (ex.: <code>p01</code>).
+                    O sistema busca dados nas 15 primeiras linhas do arquivo do aluno. Use os marcadores de comentário da sua linguagem (<code>//</code>, <code>#</code>, etc).
                 </div>
             </div>
 
             <div class="estrutura-esperada">
-                prova-01/
-                ├── submissoes/
-                │ ├── ana-silva/
-                │ │ ├── p01.c
-                │ │ └── p02.c
-                │ ├── bruno-costa/
-                │ │ ├── p01.c
-                │ │ └── p03.c
-                │ |── carla-souza/
-                | ├── p01.c
-                │ ├── p02.c
-                │ └── p03.c
-                └── gabaritos/
-                ├── p01.c
-                ├── p02.c
-                └── p03.c
+                prova-01.zip/
+                ├── gabaritos/           <-- Pasta obrigatória
+                │   ├── p01.c
+                │   └── p02.c
+                └── (Arquivos de alunos) <-- O sistema acha pelo nome
+                    ├── a006820q01t01.c      
+                    └── a006820q02t01.c
+                
+                // Exemplo de cabeçalho lido do aluno:
+                // Aluno: Ana Beatriz Lima 2823610045 (4735)
+                // Questao: 2, 1a tentativa, nota: 9.8
             </div>
 
             <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
