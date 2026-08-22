@@ -15,13 +15,13 @@ function fecharModal(nomeModal) {
     }
 }
 
-// Evento do botão Sobre (Único modal que sobrou na página)
+// Evento do botão Sobre
 const btnSobre = document.getElementById('botao-sobre');
 if (btnSobre) {
     btnSobre.addEventListener('click', () => abrirModal('sobre'));
 }
 
-// Eventos de fechar o modal Sobre (clicando no 'X' ou no botão 'Entendi')
+// Eventos de fechar o modal
 document.querySelectorAll('.fechar-modal').forEach(botao => {
     botao.addEventListener('click', (e) => {
         const nomeModal = e.target.getAttribute('data-modal');
@@ -61,36 +61,117 @@ document.querySelectorAll('.aba').forEach(aba => {
     });
 });
 
-// ===== FUNCIONALIDADE DO PAINEL DE NOTAS =====
-const notaManualInput = document.getElementById('nota-manual-input');
-const justificativaInput = document.getElementById('justificativa-correcao');
-const botaoSalvar = document.querySelector('.painel-notas .botao');
 
-if (notaManualInput) {
-    notaManualInput.addEventListener('change', () => {
-        const notaDredd = 10.0;
-        const notaManual = parseFloat(notaManualInput.value) || 0;
-        const notaFinal = (notaDredd + notaManual) / 2;
+// ===== GERENCIAMENTO DE SUBMISSÕES E CÓDIGO =====
+function escaparParaExibicao(texto) {
+    const div = document.createElement('div');
+    div.textContent = texto;
+    return div.innerHTML;
+}
 
-        const caixasNota = document.querySelectorAll('.painel-notas .caixa-notas');
-        if (caixasNota.length >= 3) {
-            caixasNota[2].textContent = notaFinal.toFixed(1);
-        }
+function ativarSelecaoDeSubmissoes() {
+    document.querySelectorAll('.item-submissao').forEach(item => {
+        item.addEventListener('click', () => {
+            // Atualiza classe visual
+            document.querySelectorAll('.item-submissao').forEach(i => i.classList.remove('ativo'));
+            item.classList.add('ativo');
+
+            // 1. LÊ OS DADOS DO DATASET
+            const codigo = item.dataset.codigo || '';
+            const aluno = item.dataset.aluno || '';
+            const matricula = item.dataset.matricula || '';
+            const turma = item.dataset.turma || '';
+            const notaAtual = item.dataset.notaAtual || '';
+            const notaDredd = item.dataset.notaDredd || '';
+            const justificativa = item.dataset.justificativa || '';
+            const problema = item.dataset.problema || 'Problema não identificado';
+            
+            // 2. RENDERIZA O CÓDIGO
+            const painelCodigo = document.getElementById('codigo-aluno');
+            if (painelCodigo) {
+                painelCodigo.innerHTML =
+                    `<pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">${escaparParaExibicao(codigo)}</pre>`;
+            }
+
+            // 3. ATUALIZA AS INFORMAÇÕES DO ESTUDANTE NA BARRA LATERAL
+
+            const tituloProblema = document.getElementById('titulo-problema');
+            if (tituloProblema) {
+                // Se o Django encontrou o problema, ele exibe "Problema: Nome do Problema"
+                tituloProblema.textContent = problema !== 'Problema não identificado' 
+                                            ? `Problema: ${problema}` 
+                                            : problema;
+            }
+
+            const nomeUsuario = document.getElementById('nome-usuario');
+            if (nomeUsuario) nomeUsuario.textContent = aluno;
+
+            const matriculaUsuario = document.getElementById('matricula-usuario');
+            if (matriculaUsuario) matriculaUsuario.textContent = matricula;
+
+            const turmaUsuario = document.getElementById('turma-usuario');
+            if (turmaUsuario) turmaUsuario.textContent = turma;
+
+            const notaUsuario = document.getElementById('nota-usuario');
+            if (notaUsuario) notaUsuario.textContent = notaAtual;
+
+            // 4. PREENCHE AS NOTAS E JUSTIFICATIVAS DO PAINEL DE AVALIAÇÃO
+            const caixaNotaDredd = document.getElementById('caixa-nota-dredd');
+            if (caixaNotaDredd) caixaNotaDredd.textContent = notaDredd || '—';
+
+            const justificativaInput = document.getElementById('justificativa-correcao');
+            if (justificativaInput) justificativaInput.value = justificativa;
+
+            atualizarNotaFinal();
+        });
     });
 }
 
-if (botaoSalvar && notaManualInput && justificativaInput) {
-    botaoSalvar.addEventListener('click', () => {
-        const idSubmissao = 'sub-001';
-        const notaManual = parseFloat(notaManualInput.value);
-        const justificativa = justificativaInput.value;
 
-        if (isNaN(notaManual)) {
-            alert('Por favor, preencha a nota manual com um valor numérico');
+// ===== FUNCIONALIDADE DO PAINEL DE NOTAS =====
+function atualizarNotaFinal() {
+    const caixaNotaDredd = document.getElementById('caixa-nota-dredd');
+    const notaManualInput = document.getElementById('nota-manual-input');
+    const caixaNotaFinal = document.getElementById('caixa-nota-final');
+
+    const notaDredd = parseFloat(caixaNotaDredd?.textContent) || 0;
+    const notaManual = parseFloat(notaManualInput?.value);
+
+    if (caixaNotaFinal) {
+        caixaNotaFinal.textContent = isNaN(notaManual)
+            ? notaDredd.toFixed(1)
+            : ((notaDredd + notaManual) / 2).toFixed(1);
+    }
+}
+
+// Recalcula a nota quando o professor digitar
+document.getElementById('nota-manual-input')?.addEventListener('input', atualizarNotaFinal);
+
+// Lógica de Salvar a Avaliação
+const botaoSalvar = document.querySelector('.painel-notas .botao');
+if (botaoSalvar) {
+    botaoSalvar.addEventListener('click', () => {
+        // Busca a submissão selecionada atualmente
+        const submissaoAtiva = document.querySelector('.item-submissao.ativo');
+        
+        if (!submissaoAtiva) {
+            alert('Selecione um arquivo de código antes de salvar.');
             return;
         }
 
-        console.log('Correção salva:', {
+        const idSubmissao = submissaoAtiva.dataset.idSubmissao;
+        const notaManualInput = document.getElementById('nota-manual-input');
+        const justificativaInput = document.getElementById('justificativa-correcao');
+        
+        const notaManual = parseFloat(notaManualInput?.value);
+        const justificativa = justificativaInput?.value;
+
+        if (isNaN(notaManual)) {
+            alert('Por favor, preencha a nota manual com um valor numérico.');
+            return;
+        }
+
+        console.log('Correção pronta para ser enviada ao backend:', {
             id_submissao: idSubmissao,
             nota_manual: notaManual,
             justificativa: justificativa
@@ -100,51 +181,7 @@ if (botaoSalvar && notaManualInput && justificativaInput) {
     });
 }
 
-
-// ===== FUNCIONALIDADE DE SELEÇÃO DE SUBMISSÃO E EXIBIÇÃO DE CÓDIGO =====
-
+// Inicializa a seleção de submissões ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Seleciona todos os arquivos listados na barra lateral
-    const itensSubmissao = document.querySelectorAll('.item-submissao');
-    const areaCodigoAluno = document.getElementById('codigo-aluno');
-    const nomeUsuarioPanel = document.getElementById('nome-usuario');
-
-    itensSubmissao.forEach(item => {
-        item.addEventListener('click', function() {
-            
-            // 1. Muda a cor de seleção (remove dos outros e coloca no clicado)
-            itensSubmissao.forEach(i => i.classList.remove('ativo'));
-            this.classList.add('ativo');
-
-            // 2. Pega os dados que guardamos nos atributos data-*
-            const codigo = this.getAttribute('data-codigo');
-            const aluno = this.getAttribute('data-aluno');
-
-            // 3. Atualiza o nome do aluno no painel "Informações do Estudante"
-            if (nomeUsuarioPanel) {
-                nomeUsuarioPanel.textContent = aluno;
-            }
-
-            // 4. Atualiza a tela preta de código no meio da página
-            if (areaCodigoAluno) {
-                // Limpa o código anterior
-                areaCodigoAluno.innerHTML = '';
-                
-                // Quebra o código recebido em linhas para manter a estética do seu CSS
-                const linhas = codigo.split('\n');
-                
-                linhas.forEach(linha => {
-                    const divLinha = document.createElement('div');
-                    divLinha.className = 'linha-codigo';
-                    
-                    // Usamos textContent para evitar injeção de HTML/XSS (muito seguro)
-                    // e preservar a indentação original
-                    divLinha.textContent = linha || ' '; 
-                    
-                    areaCodigoAluno.appendChild(divLinha);
-                });
-            }
-        });
-    });
+    ativarSelecaoDeSubmissoes();
 });

@@ -80,25 +80,34 @@
                             nova prova</a>
                     </div>
 
-                    <!-- Loop nos alunos carregados da memória -->
-                    {% for nome_aluno, arquivos in alunos.items %}
+                    <!-- Loop nos alunos carregados da memória (id_curto -> dados do aluno) -->
+                    {% for id_aluno, dados_aluno in alunos.items %}
 
                     <!-- Nome do Aluno como uma "Pasta" -->
                     <div
                         style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
-                        📁 {{ nome_aluno|title }}
+                        📁 {{ dados_aluno.nome}}
                     </div>
 
                     <!-- Loop nos arquivos desse aluno -->
-                    {% for item in arquivos %}
+                    {% for item in dados_aluno.arquivos %}
 
-                    <!-- Adicionamos atributos data-* para o JS poder capturar o código mais tarde -->
+                    <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
                     <div class="item-submissao"
-                        data-id-submissao="sub-{{ forloop.parentloop.counter }}-{{ forloop.counter }}"
-                        data-aluno="{{ nome_aluno|title }}" data-codigo="{{ item.codigo|escape }}">
+                        data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
+                        data-aluno="{{ dados_aluno.nome|default:'—' }}"
+                        data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
+                        data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
+                        data-nota-atual="{{ item.nota_dredd|default:'—' }}"
+                        data-codigo="{{ item.codigo|escape }}"
+                        data-nota-dredd="{{ item.nota_dredd|escape }}"
+                        data-justificativa="{{ item.justificativa|escape }}"
+                        data-problema="{{ item.problema|escape }}">
 
-                        <div class="nome-arquivo">📄 {{ item.arquivo }}</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">Questão</div>
+                        <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}</div>
+                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
+                            {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
+                        </div>
                     </div>
                     {% endfor %}
 
@@ -111,16 +120,16 @@
             <div class="info-usuario">
                 <div class="titulo-secao">Informações do Estudante</div>
                 <div class="label-info">Nome</div>
-                <div class="valor-info" id="nome-usuario">Ana Beatriz Lima</div>
+                <div class="valor-info" id="nome-usuario">{{dados_aluno.nome}}</div>
 
                 <div class="label-info">Matrícula</div>
-                <div class="valor-info" id="matricula-usuario">2823118045</div>
+                <div class="valor-info" id="matricula-usuario">{{dados_aluno.}}</div>
 
                 <div class="label-info">Turma</div>
-                <div class="valor-info" id="turma-usuario">ENG-COMP 2A</div>
+                <div class="valor-info" id="turma-usuario">{{dados_aluno.turma}}</div>
 
                 <div class="label-info">Nota Atual</div>
-                <div class="nota-atual" id="nota-usuario">9.8</div>
+                <div class="nota-atual" id="nota-usuario">{{dados_aluno.nota}}</div>
             </div>
         </aside>
 
@@ -129,7 +138,7 @@
 
             <!-- FAIXA SUPERIOR -->
             <div class="faixa-superior">
-                <h1 class="titulo-problema">Problema 01 - Soma de Vetor</h1>
+                <h1 class="titulo-problema" id="titulo-problema">Selecione uma submissão</h1>
                 <div class="botoes-navegacao">
                     <button class="botao botao-secundario">← Anterior</button>
                     <button class="botao botao-secundario">Próximo →</button>
@@ -255,7 +264,7 @@
                     <div class="painel-notas">
                         <div class="secao-nota">
                             <div class="titulo-nota">Nota DREDD</div>
-                            <div class="caixa-notas">10.0</div>
+                            <div class="caixa-notas" id="caixa-nota-dredd">-</div>
                         </div>
 
                         <div class="secao-nota">
@@ -266,7 +275,7 @@
 
                         <div class="secao-nota">
                             <div class="titulo-nota">Nota Final</div>
-                            <div class="caixa-notas">10.0</div>
+                            <div class="caixa-notas" id="caixa-nota-final">-</div>
                         </div>
 
                         <div class="secao-nota">
