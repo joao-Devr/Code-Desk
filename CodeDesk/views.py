@@ -15,18 +15,20 @@ LINHAS_MAX_CABECALHO = 15                     # só olhamos o início do arquivo
 
 
 # Nome do arquivo: a<id_curto>q<questao>t<tentativa>.<extensao>
-# Ex.: a006820q02t01.py -> id_curto=006820, questao=02, tentativa=01
+# Ex.: a042820q02t01.py -> id_curto=042820, questao=02, tentativa=01
+
 PADRAO_NOME_ARQUIVO = re.compile(
     r'^a(?P<id_curto>\d+)q(?P<questao>\d+)t(?P<tentativa>\d+)\.\w+$',
     re.IGNORECASE,
 )
 
 # Linhas do cabeçalho inserido em cada arquivo, ex.:
-# "# Aluno: Nome do Estudante 20221234 (6820)"
+# "# Aluno: Nome do Estudante 20221234 (4735)"
 # "# Questao: 2, 1a tentativa, nota: 3"
 # "# Problema: Matrizes – Matriz Resultante de espaços vazios (1884)"
 # "# Turma(s): FP1 3A, semestre: 2026/1, e-mail: nome@dominio.edu"
 # "# Justificativa da nota: ..."
+
 PADRAO_ALUNO = re.compile(r'Aluno:\s*(?P<nome>.+?)\s+(?P<matricula>\d+)\s*\((?P<id_curto>\d+)\)\s*$')
 PADRAO_QUESTAO = re.compile(r'Questao:\s*(?P<questao>\d+),\s*(?P<tentativa>\d+)a?\s*tentativa,\s*nota:\s*(?P<nota>[\d.,]+)', re.IGNORECASE)
 PADRAO_PROBLEMA = re.compile(r'Problema:\s*(?P<problema>.+?)\s*\((?P<problema_id>\d+)\)\s*$')
@@ -35,6 +37,7 @@ PADRAO_JUSTIFICATIVA = re.compile(r'Justificativa da nota:\s*(?P<justificativa>.
 
 # Remove marcador de comentário (#, //, /*, *, --) do início da linha antes de comparar,
 # assim o mesmo parser funciona em .py (#), .c/.java/.js (//) etc.
+
 PADRAO_LIMPA_COMENTARIO = re.compile(r'^[\s#/*\-]+')
 
 
@@ -95,7 +98,9 @@ def _processar_zip(arquivo_zip):
     alunos_dados = {}
 
     with zipfile.ZipFile(arquivo_zip, 'r') as z:
+
         # Valida METADADOS antes de descompactar qualquer coisa
+
         infos = z.infolist()
 
         if len(infos) > MAX_ARQUIVOS_NO_ZIP:
@@ -134,6 +139,7 @@ def _processar_zip(arquivo_zip):
 
             # Prioriza os dados do cabeçalho (mais completos); usa o nome do
             # arquivo como reserva quando o cabeçalho não pôde ser lido.
+
             id_curto = (cabecalho['id_curto'] or id_curto_nome).lstrip('0') or '0'
             questao = cabecalho['questao'] or questao_nome
             tentativa = cabecalho['tentativa'] or tentativa_nome
@@ -146,6 +152,7 @@ def _processar_zip(arquivo_zip):
                     'arquivos': [],
                 }
             elif cabecalho['nome'] and alunos_dados[id_curto]['nome'].startswith('Aluno '):
+
                 # Se um arquivo anterior não tinha cabeçalho legível mas este tem, atualiza o nome
                 alunos_dados[id_curto]['nome'] = cabecalho['nome']
 
