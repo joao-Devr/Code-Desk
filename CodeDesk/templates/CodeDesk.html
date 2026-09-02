@@ -83,35 +83,44 @@
                     <!-- Loop nos alunos carregados da memória (id_curto -> dados do aluno) -->
                     {% for id_aluno, dados_aluno in alunos.items %}
 
-                    <!-- Nome do Aluno como uma "Pasta" -->
-                    <div
-                        style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
-                        📁 {{ dados_aluno.nome}}
-                    </div>
+<!-- Grupo do aluno: pasta + arquivos (começa fechado) -->
+<div class="grupo-aluno">
 
-                    <!-- Loop nos arquivos desse aluno -->
-                    {% for item in dados_aluno.arquivos %}
+    <!-- Cabeçalho da "pasta" — clicável para abrir/fechar -->
+    <div class="pasta-aluno" data-aluno-toggle>
+        <span class="icone-pasta">📁</span>
+        <span class="nome-pasta">{{ dados_aluno.nome }}</span>
+        <span class="seta-pasta">▶</span>
+    </div>
 
-                    <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
-                    <div class="item-submissao"
-                        data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
-                        data-aluno="{{ dados_aluno.nome|default:'—' }}"
-                        data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
-                        data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
-                        data-nota-atual="{{ item.nota_dredd|default:'—' }}"
-                        data-codigo="{{ item.codigo|escape }}"
-                        data-nota-dredd="{{ item.nota_dredd|escape }}"
-                        data-justificativa="{{ item.justificativa|escape }}"
-                        data-problema="{{ item.problema|escape }}">
+    <!-- Arquivos desse aluno — escondidos até a pasta ser aberta -->
+    <div class="arquivos-aluno">
+        {% for item in dados_aluno.arquivos %}
 
-                        <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
-                            {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
-                        </div>
-                    </div>
-                    {% endfor %}
+        <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
+        <div class="item-submissao"
+            data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
+            data-aluno="{{ dados_aluno.nome|default:'—' }}"
+            data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
+            data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
+            data-nota-atual="{{ item.nota_dredd|default:'—' }}"
+            data-codigo="{{ item.codigo|escape }}"
+            data-nota-dredd="{{ item.nota_dredd|escape }}"
+            data-justificativa="{{ item.justificativa|escape }}"
+            data-problema="{{ item.problema|escape }}">
 
-                    {% endfor %}
+            <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}</div>
+            <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
+                {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endfor %}
+
+                    
                 </div>
                 {% endif %}
                 <!-- FIM DA CONDICIONAL -->

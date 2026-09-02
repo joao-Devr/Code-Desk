@@ -30,6 +30,7 @@ PADRAO_NOME_ARQUIVO = re.compile(
 # "# Justificativa da nota: ..."
 
 PADRAO_ALUNO = re.compile(r'Aluno:\s*(?P<nome>.+?)\s+(?P<matricula>\d+)\s*\((?P<id_curto>\d+)\)\s*$')
+PADRAO_PROVA = re.compile(r'Prova:\s*(?P<prova>.+?)\s*\((?P<prova_id>\d+)\)\s*$')
 PADRAO_QUESTAO = re.compile(r'Questao:\s*(?P<questao>\d+),\s*(?P<tentativa>\d+)a?\s*tentativa,\s*nota:\s*(?P<nota>[\d.,]+)', re.IGNORECASE)
 PADRAO_PROBLEMA = re.compile(r'Problema:\s*(?P<problema>.+?)\s*\((?P<problema_id>\d+)\)\s*$')
 PADRAO_TURMA = re.compile(r'Turma\(s\):\s*(?P<turma>.+?),\s*semestre:\s*(?P<semestre>[\d/]+),\s*e-mail:\s*\[?(?P<email>[\w.\-]+@[\w.\-]+)\]?')
@@ -52,11 +53,14 @@ def _analisar_cabecalho(conteudo):
     não encontrado fica None """
     dados = {
         'nome': None, 'matricula': None, 'id_curto': None,
+        'prova': None,
         'questao': None, 'tentativa': None, 'nota': None,
         'problema': None, 'turma': None, 'email': None, 'justificativa': None,
     }
 
-    for linha in conteudo.splitlines()[:LINHAS_MAX_CABECALHO]:
+    linhas_cabecalho = set()
+
+    for indice, linha in enumerate(conteudo.splitlines()[:LINHAS_MAX_CABECALHO]):
         linha_limpa = _limpar_linha(linha)
 
         m = PADRAO_ALUNO.match(linha_limpa)
@@ -64,33 +68,52 @@ def _analisar_cabecalho(conteudo):
             dados['nome'] = m.group('nome').strip()
             dados['matricula'] = m.group('matricula')
             dados['id_curto'] = m.group('id_curto')
+            linhas_cabecalho.add(indice)
             continue
 
+        m = PADRAO_PROVA.match(linha_limpa)
+        if m:
+            dados['prova'] = m.group('prova').strip()
+            linhas_cabecalho.add(indice)
+            continue
+        
         m = PADRAO_QUESTAO.search(linha_limpa)
         if m:
             dados['questao'] = m.group('questao').zfill(2)
             dados['tentativa'] = m.group('tentativa').zfill(2)
             dados['nota'] = m.group('nota').replace(',', '.')
+            linhas_cabecalho.add(indice)
             continue
 
         m = PADRAO_PROBLEMA.match(linha_limpa)
         if m:
             dados['problema'] = m.group('problema').strip()
+            linhas_cabecalho.add(indice)
             continue
 
         m = PADRAO_TURMA.search(linha_limpa)
         if m:
             dados['turma'] = m.group('turma').strip()
             dados['email'] = m.group('email')
+            linhas_cabecalho.add(indice)
             continue
 
         m = PADRAO_JUSTIFICATIVA.match(linha_limpa)
         if m:
             dados['justificativa'] = m.group('justificativa').strip()
+            linhas_cabecalho.add(indice)
             continue
 
-    return dados
+        
+    return dados, linhas_cabecalho
 
+def _remover_cabecalho(conteudo, linhas_cabecalho):
+    """Devolve o conteúdo do arquivo sem as linhas de cabeçalho reconhecidas."""
+    linhas = conteudo.splitlines()
+    linhas_corpo = [linha for i, linha in enumerate(linhas) if i not in linhas_cabecalho]
+
+    codigo = '\n'.join(linhas_corpo)
+    return codigo.lstrip('\n')  # remove linhas em branco que sobraram no topo
 
 def _processar_zip(arquivo_zip):
     
@@ -135,7 +158,8 @@ def _processar_zip(arquivo_zip):
             except UnicodeDecodeError:
                 conteudo = bruto.decode('latin-1', errors='ignore')
 
-            cabecalho = _analisar_cabecalho(conteudo)
+            cabecalho, linhas_cabecalho = _analisar_cabecalho(conteudo)
+            codigo_sem_cabecalho = _remover_cabecalho(conteudo, linhas_cabecalho)
 
             # Prioriza os dados do cabeçalho (mais completos); usa o nome do
             # arquivo como reserva quando o cabeçalho não pôde ser lido.
@@ -158,7 +182,7 @@ def _processar_zip(arquivo_zip):
 
             alunos_dados[id_curto]['arquivos'].append({
                 'arquivo': nome_arquivo,
-                'codigo': conteudo,
+                'codigo': codigo_sem_cabecalho,
                 'questao': questao,
                 'tentativa': tentativa,
                 'problema': cabecalho['problema'] or '',

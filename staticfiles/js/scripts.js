@@ -69,6 +69,17 @@ function escaparParaExibicao(texto) {
     return div.innerHTML;
 }
 
+function ativarPastasDeAlunos() {
+    document.querySelectorAll('.pasta-aluno').forEach(pasta => {
+        pasta.addEventListener('click', () => {
+            const grupo = pasta.closest('.grupo-aluno');
+            if (grupo) {
+                grupo.classList.toggle('aberto');
+            }
+        });
+    });
+}
+
 function ativarSelecaoDeSubmissoes() {
     document.querySelectorAll('.item-submissao').forEach(item => {
         item.addEventListener('click', () => {
@@ -184,4 +195,5 @@ if (botaoSalvar) {
 // Inicializa a seleção de submissões ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
     ativarSelecaoDeSubmissoes();
+    ativarPastasDeAlunos();
 });
