@@ -96,7 +96,7 @@ function ativarSelecaoDeSubmissoes() {
             const notaDredd = item.dataset.notaDredd || '';
             const justificativa = item.dataset.justificativa || '';
             const problema = item.dataset.problema || 'Problema não identificado';
-            
+
             // 2. RENDERIZA O CÓDIGO
             const painelCodigo = document.getElementById('codigo-aluno');
             if (painelCodigo) {
@@ -109,9 +109,9 @@ function ativarSelecaoDeSubmissoes() {
             const tituloProblema = document.getElementById('titulo-problema');
             if (tituloProblema) {
                 // Se o Django encontrou o problema, ele exibe "Problema: Nome do Problema"
-                tituloProblema.textContent = problema !== 'Problema não identificado' 
-                                            ? `Problema: ${problema}` 
-                                            : problema;
+                tituloProblema.textContent = problema !== 'Problema não identificado'
+                    ? `Problema: ${problema}`
+                    : problema;
             }
 
             const nomeUsuario = document.getElementById('nome-usuario');
@@ -164,7 +164,7 @@ if (botaoSalvar) {
     botaoSalvar.addEventListener('click', () => {
         // Busca a submissão selecionada atualmente
         const submissaoAtiva = document.querySelector('.item-submissao.ativo');
-        
+
         if (!submissaoAtiva) {
             alert('Selecione um arquivo de código antes de salvar.');
             return;
@@ -173,7 +173,7 @@ if (botaoSalvar) {
         const idSubmissao = submissaoAtiva.dataset.idSubmissao;
         const notaManualInput = document.getElementById('nota-manual-input');
         const justificativaInput = document.getElementById('justificativa-correcao');
-        
+
         const notaManual = parseFloat(notaManualInput?.value);
         const justificativa = justificativaInput?.value;
 
@@ -193,7 +193,7 @@ if (botaoSalvar) {
 }
 
 // Inicializa a seleção de submissões ao carregar a página
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     ativarSelecaoDeSubmissoes();
     ativarPastasDeAlunos();
 });

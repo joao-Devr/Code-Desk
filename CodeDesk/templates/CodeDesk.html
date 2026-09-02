@@ -83,44 +83,44 @@
                     <!-- Loop nos alunos carregados da memória (id_curto -> dados do aluno) -->
                     {% for id_aluno, dados_aluno in alunos.items %}
 
-<!-- Grupo do aluno: pasta + arquivos (começa fechado) -->
-<div class="grupo-aluno">
+                    <!-- Grupo do aluno: pasta + arquivos (começa fechado) -->
+                    <div class="grupo-aluno">
 
-    <!-- Cabeçalho da "pasta" — clicável para abrir/fechar -->
-    <div class="pasta-aluno" data-aluno-toggle>
-        <span class="icone-pasta">📁</span>
-        <span class="nome-pasta">{{ dados_aluno.nome }}</span>
-        <span class="seta-pasta">▶</span>
-    </div>
+                        <!-- Cabeçalho da "pasta" — clicável para abrir/fechar -->
+                        <div class="pasta-aluno" data-aluno-toggle>
+                            <span class="icone-pasta">📁</span>
+                            <span class="nome-pasta">{{ dados_aluno.nome }}</span>
+                            <span class="seta-pasta">▶</span>
+                        </div>
 
-    <!-- Arquivos desse aluno — escondidos até a pasta ser aberta -->
-    <div class="arquivos-aluno">
-        {% for item in dados_aluno.arquivos %}
+                        <!-- Arquivos desse aluno — escondidos até a pasta ser aberta -->
+                        <div class="arquivos-aluno">
+                            {% for item in dados_aluno.arquivos %}
 
-        <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
-        <div class="item-submissao"
-            data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
-            data-aluno="{{ dados_aluno.nome|default:'—' }}"
-            data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
-            data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
-            data-nota-atual="{{ item.nota_dredd|default:'—' }}"
-            data-codigo="{{ item.codigo|escape }}"
-            data-nota-dredd="{{ item.nota_dredd|escape }}"
-            data-justificativa="{{ item.justificativa|escape }}"
-            data-problema="{{ item.problema|escape }}">
+                            <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
+                            <div class="item-submissao"
+                                data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
+                                data-aluno="{{ dados_aluno.nome|default:'—' }}"
+                                data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
+                                data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
+                                data-nota-atual="{{ item.nota_dredd|default:'—' }}"
+                                data-codigo="{{ item.codigo|escape }}" data-nota-dredd="{{ item.nota_dredd|escape }}"
+                                data-justificativa="{{ item.justificativa|escape }}"
+                                data-problema="{{ item.problema|escape }}">
 
-            <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}</div>
-            <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
-                {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
+                                <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
+                                    {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
 
-{% endfor %}
+                    {% endfor %}
 
-                    
+
                 </div>
                 {% endif %}
                 <!-- FIM DA CONDICIONAL -->
@@ -374,7 +374,7 @@
         </div>
     </div>
 
-<!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
+    <!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
     <div class="overlay-modal" id="modal-sobre">
         <div class="caixa-modal modal-instrucoes">
             <div class="titulo-modal">
@@ -383,20 +383,24 @@
             </div>
 
             <p class="descricao-modal">
-                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma pasta separada para os gabaritos da prova.
+                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
+                pasta separada para os gabaritos da prova.
             </p>
 
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">1. Pasta de Gabaritos (Obrigatório)</div>
                 <div class="texto-instrucao">
-                    O arquivo ZIP deve conter uma pasta chamada <code>gabaritos/</code>. Dentro dela, coloque as soluções esperadas para cada problema (ex.: <code>p01.c</code>, <code>p02.c</code>).
+                    O arquivo ZIP deve conter uma pasta chamada <code>gabaritos/</code>. Dentro dela, coloque as
+                    soluções esperadas para cada problema (ex.: <code>p01.c</code>, <code>p02.c</code>).
                 </div>
             </div>
 
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">2. Arquivos dos Alunos (Padrão de Nome)</div>
                 <div class="texto-instrucao">
-                    Os arquivos dos alunos podem estar organizados em pastas ou soltos no ZIP, mas <strong>precisam</strong> seguir o padrão: <code>a&lt;id&gt;q&lt;questao&gt;t&lt;tentativa&gt;.&lt;extensao&gt;</code>.<br>
+                    Os arquivos dos alunos podem estar organizados em pastas ou soltos no ZIP, mas
+                    <strong>precisam</strong> seguir o padrão:
+                    <code>a&lt;id&gt;q&lt;questao&gt;t&lt;tentativa&gt;.&lt;extensao&gt;</code>.<br>
                     Exemplo: <strong>a042820q02t01.c</strong>.
                 </div>
             </div>
@@ -404,29 +408,22 @@
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">3. Cabeçalho de Metadados</div>
                 <div class="texto-instrucao">
-                    O sistema busca dados nas 15 primeiras linhas do arquivo do aluno. Use os marcadores de comentário da sua linguagem (<code>//</code>, <code>#</code>, etc).
+                    O sistema busca dados nas 15 primeiras linhas do arquivo do aluno. Use os marcadores de comentário
+                    da sua linguagem (<code>//</code>, <code>#</code>, etc).
                 </div>
             </div>
 
             <div class="estrutura-esperada">
                 prova-01.zip/
-                ├── gabaritos/           <-- Pasta obrigatória
-                │   ├── p01.c
-                │   └── p02.c
-                └── (Arquivos de alunos) <-- O sistema acha pelo nome
-                    ├── a042820q01t01.c      
-                    └── a042820q02t01.c
-                
-                // Exemplo de cabeçalho lido do aluno:
-                // Aluno: Ana Beatriz Lima 2823610045 (4735)
-                // Questao: 2, 1a tentativa, nota: 9.8
+                ├── gabaritos/ <-- Pasta obrigatória │ ├── p01.c │ └── p02.c └── (Arquivos de alunos) <-- O sistema acha
+                    pelo nome ├── a042820q01t01.c └── a042820q02t01.c // Exemplo de cabeçalho lido do aluno: // Aluno:
+                    Ana Beatriz Lima 2823610045 (4735) // Questao: 2, 1a tentativa, nota: 9.8 </div>
+
+                    <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
             </div>
-
-            <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
         </div>
-    </div>
 
-    <script src="{% static 'js/scripts.js' %}"></script>
+        <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 
 </html>
