@@ -202,8 +202,71 @@ if (botaoSalvar) {
     });
 }
 
-// Inicializa a seleção de submissões ao carregar a página
+// ===== FUNCIONALIDADE DOS BOTÕES ANTERIOR E PRÓXIMO =====
+function configurarBotoesNavegacao() {
+    const btnAnterior = document.getElementById('btn-anterior');
+    const btnProximo = document.getElementById('btn-proximo');
+
+    if (!btnAnterior || !btnProximo) return;
+
+    function navegarMesmaQuestao(direcao) {
+        // Pega o item que está selecionado no momento
+        const itemAtivo = document.querySelector('.item-submissao.ativo');
+        
+        if (!itemAtivo) {
+            alert("Selecione a questão de um aluno primeiro para começar a navegar.");
+            return;
+        }
+
+        // Descobre qual é a questão atual (ex: "01" ou "02")
+        const questaoAtual = itemAtivo.dataset.questao;
+        
+        // Busca TODOS os itens na barra lateral que são dessa mesma questão
+        const itensMesmaQuestao = Array.from(document.querySelectorAll(`.item-submissao[data-questao="${questaoAtual}"]`));
+        
+        if (itensMesmaQuestao.length <= 1) {
+            alert("Não há outros alunos com esta mesma questão.");
+            return;
+        }
+
+        // Encontra a posição do aluno atual na lista
+        const indexAtual = itensMesmaQuestao.indexOf(itemAtivo);
+        let novoIndex;
+
+        if (direcao === 'proximo') {
+            novoIndex = indexAtual + 1;
+            if (novoIndex >= itensMesmaQuestao.length) {
+                alert('Fim da lista! Você já corrigiu esta questão para todos os alunos.');
+                return; 
+            }
+        } else if (direcao === 'anterior') {
+            novoIndex = indexAtual - 1;
+            if (novoIndex < 0) {
+                alert('Este é o primeiro aluno da lista para esta questão.');
+                return; 
+            }
+        }
+
+        const novoItem = itensMesmaQuestao[novoIndex];
+
+        // Se o aluno estiver dentro de uma "pasta" fechada, abre a pasta automaticamente
+        const grupo = novoItem.closest('.grupo-aluno');
+        if (grupo && !grupo.classList.contains('aberto')) {
+            grupo.classList.add('aberto');
+        }
+
+        // Simula o clique no novo aluno e rola a barra lateral
+        novoItem.click();
+        novoItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    btnAnterior.addEventListener('click', () => navegarMesmaQuestao('anterior'));
+    btnProximo.addEventListener('click', () => navegarMesmaQuestao('proximo'));
+}
+
+// ===== INICIALIZAÇÃO GERAL AO CARREGAR A PÁGINA =====
 document.addEventListener('DOMContentLoaded', function () {
     ativarSelecaoDeSubmissoes();
     ativarPastasDeAlunos();
+    configurarBotoesNavegacao(); // Ativa os botões
 });
