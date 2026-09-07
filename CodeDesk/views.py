@@ -35,6 +35,7 @@ PADRAO_QUESTAO = re.compile(r'Questao:\s*(?P<questao>\d+),\s*(?P<tentativa>\d+)a
 PADRAO_PROBLEMA = re.compile(r'Problema:\s*(?P<problema>.+?)\s*\((?P<problema_id>\d+)\)\s*$')
 PADRAO_TURMA = re.compile(r'Turma\(s\):\s*(?P<turma>.+?),\s*semestre:\s*(?P<semestre>[\d/]+),\s*e-mail:\s*\[?(?P<email>[\w.\-]+@[\w.\-]+)\]?')
 PADRAO_JUSTIFICATIVA = re.compile(r'Justificativa da nota:\s*(?P<justificativa>.*)$')
+PADRAO_GABARITO = re.compile(r'^q(?P<questao>\d+)\.\w+$', re.IGNORECASE)
 
 # Remove marcador de comentário (#, //, /*, *, --) do início da linha antes de comparar,
 # assim o mesmo parser funciona em .py (#), .c/.java/.js (//) etc.
@@ -119,7 +120,7 @@ def _processar_zip(arquivo_zip):
     
     # Lê o .zip em memória e devolve (alunos_dados, erro).
     alunos_dados = {}
-
+    gabaritos_dados = {}
     with zipfile.ZipFile(arquivo_zip, 'r') as z:
 
         # Valida METADADOS antes de descompactar qualquer coisa
@@ -138,6 +139,20 @@ def _processar_zip(arquivo_zip):
                 continue  # é uma pasta, não um arquivo
 
             nome_arquivo = os.path.basename(nome_caminho)
+
+            # Verifica se o arquivo está dentro de uma pasta chamada 'gabarito' ou 'gabaritos'
+            pasta_pai = os.path.basename(os.path.dirname(nome_caminho)).lower()
+            if pasta_pai in ['gabarito', 'gabaritos']:
+                m_gab = PADRAO_GABARITO.match(nome_arquivo)
+                if m_gab:
+                    questao_gab = m_gab.group('questao').zfill(2)
+                    with z.open(nome_caminho) as f:
+                        try:
+                            conteudo_gab = f.read().decode('utf-8')
+                        except UnicodeDecodeError:
+                            conteudo_gab = f.read().decode('latin-1', errors='ignore')
+                    gabaritos_dados[questao_gab] = conteudo_gab
+                continue # Pula para o próximo arquivo (não processa o gabarito como aluno)
 
             _, extensao = os.path.splitext(nome_arquivo)
             if extensao.lower() not in EXTENSOES_SUPORTADAS:
@@ -196,7 +211,7 @@ def _processar_zip(arquivo_zip):
     if not alunos_dados:
         return None, 'Nenhum arquivo no padrão axxxxxqyytzz.ext foi encontrado no .zip.'
 
-    return alunos_dados, None
+    return alunos_dados, gabaritos_dados, None
 
 
 @login_required
@@ -217,7 +232,7 @@ def codedesk(request):
             return render(request, 'CodeDesk.html', contexto)
 
         try:
-            alunos_dados, erro = _processar_zip(arquivo_zip)
+            alunos_dados, gabaritos_dados, erro = _processar_zip(arquivo_zip)
         except zipfile.BadZipFile:
             contexto['erro'] = "O arquivo enviado está corrompido ou não é um ZIP válido."
             return render(request, 'CodeDesk.html', contexto)
@@ -226,5 +241,6 @@ def codedesk(request):
             contexto['erro'] = erro
         else:
             contexto['alunos'] = alunos_dados
+            contexto['gabaritos'] = gabaritos_dados
 
     return render(request, 'CodeDesk.html', contexto)

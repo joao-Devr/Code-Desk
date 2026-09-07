@@ -21,6 +21,31 @@ nome_zip = "provas_alunos.zip"
 
 questoes = [
     {
+        "questao": "01",
+        "tentativa": "01",
+        "nota": "10",
+        "problema": "Leitura e impressão de dados",
+        "codigo_problema": "0000",
+        "justificativa": "Questão resolvida corretamente.",
+        "codigo": '''
+# Programa para ler o nome e a idade e exibir uma mensagem
+
+nome = input("Digite seu nome: ")
+idade = int(input("Digite sua idade: "))
+
+print(f"Olá, {nome}! Você tem {idade} anos.")
+''',
+        "gabarito": '''
+# Gabarito – Leitura e impressão de dados
+
+nome = input("Digite seu nome: ")
+idade = int(input("Digite sua idade: "))
+
+print(f"Olá, {nome}! Você tem {idade} anos.")
+'''
+    },
+
+    {
         "questao": "02",
         "tentativa": "01",
         "nota": "3",
@@ -47,6 +72,25 @@ print("\\nMatriz resultante:")
 
 for linha in matriz:
     print(*linha)
+''',
+        "gabarito": '''
+# Gabarito – Matriz Resultante de espaços vazios
+
+linhas = int(input("Digite o número de linhas: "))
+colunas = int(input("Digite o número de colunas: "))
+
+matriz = []
+
+for i in range(linhas):
+    linha = []
+    for j in range(colunas):
+        valor = input(f"Digite o valor [{i}][{j}]: ")
+        linha.append(valor)
+
+    matriz.append(linha)
+
+for linha in matriz:
+    print(*linha)
 '''
     },
 
@@ -66,6 +110,16 @@ numero2 = float(input("Digite o segundo número: "))
 soma = numero1 + numero2
 
 print("Resultado:", soma)
+''',
+        "gabarito": '''
+# Gabarito – Soma de números
+
+numero1 = float(input("Digite o primeiro número: "))
+numero2 = float(input("Digite o segundo número: "))
+
+soma = numero1 + numero2
+
+print("Resultado:", soma)
 '''
     },
 
@@ -78,6 +132,17 @@ print("Resultado:", soma)
         "justificativa": "Questão resolvida corretamente.",
         "codigo": '''
 # Programa para calcular a média de três números
+
+n1 = float(input("Digite a primeira nota: "))
+n2 = float(input("Digite a segunda nota: "))
+n3 = float(input("Digite a terceira nota: "))
+
+media = (n1 + n2 + n3) / 3
+
+print("Média:", media)
+''',
+        "gabarito": '''
+# Gabarito – Média de três números
 
 n1 = float(input("Digite a primeira nota: "))
 n2 = float(input("Digite a segunda nota: "))
@@ -150,6 +215,14 @@ with zipfile.ZipFile(nome_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
             zipf.writestr(nome_arquivo, conteudo)
 
             arquivos_criados.append(nome_arquivo)
+
+    # ------------------------------------------------------------
+    # Pasta "gabarito" com o código correto de cada questão
+    # ------------------------------------------------------------
+    for questao in questoes:
+        nome_gabarito = f"gabarito/q{int(questao['questao'])}.py"
+        zipf.writestr(nome_gabarito, questao["gabarito"].strip() + "\n")
+        arquivos_criados.append(nome_gabarito)
 
 print("========================================")
 print("Arquivos adicionados ao ZIP:")

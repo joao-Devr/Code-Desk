@@ -81,14 +81,21 @@ function ativarPastasDeAlunos() {
 }
 
 function ativarSelecaoDeSubmissoes() {
+    // 1. Carrega os gabaritos silenciosamente do HTML
+    let gabaritos = {};
+    const scriptGabaritos = document.getElementById('dados-gabaritos');
+    if (scriptGabaritos) {
+        gabaritos = JSON.parse(scriptGabaritos.textContent);
+    }
+
     document.querySelectorAll('.item-submissao').forEach(item => {
         item.addEventListener('click', () => {
-            // Atualiza classe visual
             document.querySelectorAll('.item-submissao').forEach(i => i.classList.remove('ativo'));
             item.classList.add('ativo');
 
-            // 1. LÊ OS DADOS DO DATASET
+            // 2. Lê os dados
             const codigo = item.dataset.codigo || '';
+            const questao = item.dataset.questao || '';
             const aluno = item.dataset.aluno || '';
             const matricula = item.dataset.matricula || '';
             const turma = item.dataset.turma || '';
@@ -96,40 +103,43 @@ function ativarSelecaoDeSubmissoes() {
             const notaDredd = item.dataset.notaDredd || '';
             const justificativa = item.dataset.justificativa || '';
             const problema = item.dataset.problema || 'Problema não identificado';
-
-            // 2. RENDERIZA O CÓDIGO
+            
+            // 3. Renderiza CÓDIGO DO ALUNO
             const painelCodigo = document.getElementById('codigo-aluno');
             if (painelCodigo) {
                 painelCodigo.innerHTML =
                     `<pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">${escaparParaExibicao(codigo)}</pre>`;
             }
 
-            // 3. ATUALIZA AS INFORMAÇÕES DO ESTUDANTE NA BARRA LATERAL
-
-            const tituloProblema = document.getElementById('titulo-problema');
-            if (tituloProblema) {
-                // Se o Django encontrou o problema, ele exibe "Problema: Nome do Problema"
-                tituloProblema.textContent = problema !== 'Problema não identificado'
-                    ? `Problema: ${problema}`
-                    : problema;
+            // 4. Renderiza GABARITO (Busca no JSON pelo número da questão)
+            const painelGabarito = document.getElementById('codigo-gabarito');
+            if (painelGabarito) {
+                const gabaritoCodigo = gabaritos[questao] || `// Gabarito não encontrado para a Questão ${questao}.`;
+                painelGabarito.innerHTML = 
+                    `<pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">${escaparParaExibicao(gabaritoCodigo)}</pre>`;
             }
 
+            // Atualiza Título
+            const tituloProblema = document.getElementById('titulo-problema');
+            if (tituloProblema) {
+                tituloProblema.textContent = problema !== 'Problema não identificado' 
+                                            ? `Problema: ${problema}` 
+                                            : problema;
+            }
+
+            // Atualiza Sidebar
             const nomeUsuario = document.getElementById('nome-usuario');
             if (nomeUsuario) nomeUsuario.textContent = aluno;
-
             const matriculaUsuario = document.getElementById('matricula-usuario');
             if (matriculaUsuario) matriculaUsuario.textContent = matricula;
-
             const turmaUsuario = document.getElementById('turma-usuario');
             if (turmaUsuario) turmaUsuario.textContent = turma;
-
             const notaUsuario = document.getElementById('nota-usuario');
             if (notaUsuario) notaUsuario.textContent = notaAtual;
 
-            // 4. PREENCHE AS NOTAS E JUSTIFICATIVAS DO PAINEL DE AVALIAÇÃO
+            // Preenche Notas
             const caixaNotaDredd = document.getElementById('caixa-nota-dredd');
             if (caixaNotaDredd) caixaNotaDredd.textContent = notaDredd || '—';
-
             const justificativaInput = document.getElementById('justificativa-correcao');
             if (justificativaInput) justificativaInput.value = justificativa;
 

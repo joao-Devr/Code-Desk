@@ -51,7 +51,8 @@ body {
 /* LAYOUT PRINCIPAL */
 .contenedor-principal {
     display: flex;
-    min-height: calc(100vh - 60px);
+    height: calc(100vh - 60px);
+    overflow: hidden;
 }
 
 /* SIDEBAR */
@@ -60,16 +61,17 @@ body {
     background-color: var(--cor-fundo-secundario);
     border-right: 1px solid var(--cor-borda);
     padding: 1.5rem 1rem;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    height: 100%;     
+    min-height: 0;      
+    overflow: hidden;
 }
 
 .secao-barra {
     flex: 1 1 auto;
-    /* ocupa o espaço disponível */
     min-height: 0;
-    /* necessário pro overflow funcionar dentro do flex */
     overflow-y: auto;
-    /* só essa área rola, não a sidebar inteira */
     margin-bottom: 0;
 }
 

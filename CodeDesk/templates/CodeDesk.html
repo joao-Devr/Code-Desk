@@ -100,6 +100,7 @@
                             <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
                             <div class="item-submissao"
                                 data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
+                                data-questao="{{ item.questao }}"
                                 data-aluno="{{ dados_aluno.nome|default:'—' }}"
                                 data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
                                 data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
@@ -173,70 +174,11 @@
                 <!-- PAINEL DO GABARITO -->
                 <div class="painel-codigo">
                     <div class="cabecalho-painel">Gabarito</div>
-
                     <div class="conteudo-codigo" id="codigo-gabarito">
-                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt; </div>
-
-                        <div class="linha-codigo"></div>
-
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
-                                class="palavra-chave">int</span> n) {
+                        <!-- MENSAGEM INICIAL -->
+                        <div style="color: var(--cor-texto-terciario); text-align: center; margin-top: 2rem;">
+                            <h2>Selecione um arquivo na barra lateral para visualizar o gabarito.</h2>
                         </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
-                            <span class="numero">0</span>;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;} </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            total;
-                        </div>
-
-                        <div class="linha-codigo">}</div>
-
-                        <div class="linha-codigo"></div>
-
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
-                                class="string">"%d"</span>, &amp;n);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
-                                class="numero">100</span>];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
-                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
-                        </div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            <span class="numero">0</span>;
-                        </div>
-                        <div class="linha-codigo">}</div>
                     </div>
                 </div>
 
@@ -422,8 +364,8 @@
                     <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
             </div>
         </div>
-
+        <!-- Passa o dicionário de gabaritos gerado no Python para o JS de forma segura -->
+             {{ gabaritos|json_script:"dados-gabaritos" }}
         <script src="{% static 'js/scripts.js' %}"></script>
 </body>
-
 </html>
