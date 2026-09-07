@@ -208,8 +208,40 @@ def _processar_zip(arquivo_zip):
     for aluno in alunos_dados.values():
         aluno['arquivos'].sort(key=lambda item: (item['questao'], item['tentativa']))
 
+    # Descobre o total de questões da prova baseado na quantidade de gabaritos
+    total_questoes_prova = len(gabaritos_dados)
+
+    for aluno in alunos_dados.values():
+        aluno['arquivos'].sort(key=lambda item: (item['questao'], item['tentativa']))
+        
+        # Pega a maior nota de cada questão (útil se houver mais de uma tentativa da mesma questão)
+        notas_por_questao = {}
+        for arq in aluno['arquivos']:
+            q = arq['questao']
+            n_str = arq['nota_dredd']
+            n_val = 0.0
+            if n_str:
+                try:
+                    n_val = float(n_str)
+                except ValueError:
+                    pass
+            
+            # Atualiza se for a primeira vez vendo a questão ou se a nota for maior
+            if q not in notas_por_questao or n_val > notas_por_questao[q]:
+                notas_por_questao[q] = n_val
+        
+        soma_notas = sum(notas_por_questao.values())
+        
+        # O divisor é o total de gabaritos. Se não houver gabaritos enviados, divide pelo total de questões enviadas pelo aluno.
+        divisor = total_questoes_prova if total_questoes_prova > 0 else max(len(notas_por_questao), 1)
+        
+        media = soma_notas / divisor
+        
+        # Formata com 1 casa decimal (ex: 66.666... vira 66.7)
+        aluno['nota_final'] = f"{media:.1f}"
+
     if not alunos_dados:
-        return None, 'Nenhum arquivo no padrão axxxxxqyytzz.ext foi encontrado no .zip.'
+        return None, None, 'Nenhum arquivo no padrão axxxxxqyytzz.ext foi encontrado no .zip.'
 
     return alunos_dados, gabaritos_dados, None
 

@@ -99,7 +99,7 @@ function ativarSelecaoDeSubmissoes() {
             const aluno = item.dataset.aluno || '';
             const matricula = item.dataset.matricula || '';
             const turma = item.dataset.turma || '';
-            const notaAtual = item.dataset.notaAtual || '';
+            const notaFinalAluno = item.dataset.notaFinalAluno || '—';
             const notaDredd = item.dataset.notaDredd || '';
             const justificativa = item.dataset.justificativa || '';
             const problema = item.dataset.problema || 'Problema não identificado';
@@ -135,7 +135,7 @@ function ativarSelecaoDeSubmissoes() {
             const turmaUsuario = document.getElementById('turma-usuario');
             if (turmaUsuario) turmaUsuario.textContent = turma;
             const notaUsuario = document.getElementById('nota-usuario');
-            if (notaUsuario) notaUsuario.textContent = notaAtual;
+            if (notaUsuario) notaUsuario.textContent = notaFinalAluno;
 
             // Preenche Notas
             const caixaNotaDredd = document.getElementById('caixa-nota-dredd');

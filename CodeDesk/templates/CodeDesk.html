@@ -104,7 +104,7 @@
                                 data-aluno="{{ dados_aluno.nome|default:'—' }}"
                                 data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
                                 data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
-                                data-nota-atual="{{ item.nota_dredd|default:'—' }}"
+                                data-nota-final-aluno="{{ dados_aluno.nota_final }}"
                                 data-codigo="{{ item.codigo|escape }}" data-nota-dredd="{{ item.nota_dredd|escape }}"
                                 data-justificativa="{{ item.justificativa|escape }}"
                                 data-problema="{{ item.problema|escape }}">
