@@ -83,35 +83,45 @@
                     <!-- Loop nos alunos carregados da memória (id_curto -> dados do aluno) -->
                     {% for id_aluno, dados_aluno in alunos.items %}
 
-                    <!-- Nome do Aluno como uma "Pasta" -->
-                    <div
-                        style="font-weight: 500; font-size: 0.9rem; color: var(--cor-texto-primario); margin-top: 15px; margin-bottom: 5px; border-bottom: 1px solid var(--cor-borda); padding-bottom: 3px;">
-                        📁 {{ dados_aluno.nome}}
-                    </div>
+                    <!-- Grupo do aluno: pasta + arquivos (começa fechado) -->
+                    <div class="grupo-aluno">
 
-                    <!-- Loop nos arquivos desse aluno -->
-                    {% for item in dados_aluno.arquivos %}
+                        <!-- Cabeçalho da "pasta" — clicável para abrir/fechar -->
+                        <div class="pasta-aluno" data-aluno-toggle>
+                            <span class="icone-pasta">📁</span>
+                            <span class="nome-pasta">{{ dados_aluno.nome }}</span>
+                            <span class="seta-pasta">▶</span>
+                        </div>
 
-                    <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
-                    <div class="item-submissao"
-                        data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
-                        data-aluno="{{ dados_aluno.nome|default:'—' }}"
-                        data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
-                        data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
-                        data-nota-atual="{{ item.nota_dredd|default:'—' }}"
-                        data-codigo="{{ item.codigo|escape }}"
-                        data-nota-dredd="{{ item.nota_dredd|escape }}"
-                        data-justificativa="{{ item.justificativa|escape }}"
-                        data-problema="{{ item.problema|escape }}">
+                        <!-- Arquivos desse aluno — escondidos até a pasta ser aberta -->
+                        <div class="arquivos-aluno">
+                            {% for item in dados_aluno.arquivos %}
 
-                        <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}</div>
-                        <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
-                            {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
+                            <!-- Atributos data-* para o JS ler ao clicar (código já escapado pelo Django) -->
+                            <div class="item-submissao"
+                                data-id-submissao="sub-{{ id_aluno }}-{{ item.questao }}-{{ item.tentativa }}"
+                                data-questao="{{ item.questao }}"
+                                data-aluno="{{ dados_aluno.nome|default:'—' }}"
+                                data-matricula="{{ dados_aluno.matricula|default:'Sem matrícula' }}"
+                                data-turma="{{ dados_aluno.turma|default:'Sem turma' }}"
+                                data-nota-final-aluno="{{ dados_aluno.nota_final }}"
+                                data-codigo="{{ item.codigo|escape }}" data-nota-dredd="{{ item.nota_dredd|escape }}"
+                                data-justificativa="{{ item.justificativa|escape }}"
+                                data-problema="{{ item.problema|escape }}">
+
+                                <div class="nome-arquivo">📄 Questão {{ item.questao }} · Tentativa {{ item.tentativa }}
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--cor-texto-terciario);">
+                                    {% if item.nota_dredd %}nota: {{ item.nota_dredd }}{% else %}sem nota{% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
-                    {% endfor %}
 
                     {% endfor %}
+
+
                 </div>
                 {% endif %}
                 <!-- FIM DA CONDICIONAL -->
@@ -140,8 +150,8 @@
             <div class="faixa-superior">
                 <h1 class="titulo-problema" id="titulo-problema">Selecione uma submissão</h1>
                 <div class="botoes-navegacao">
-                    <button class="botao botao-secundario">← Anterior</button>
-                    <button class="botao botao-secundario">Próximo →</button>
+                    <button id="btn-anterior" class="botao botao-secundario">← Anterior</button>
+                    <button id="btn-proximo" class="botao botao-secundario">Próximo →</button>
                 </div>
             </div>
 
@@ -164,70 +174,11 @@
                 <!-- PAINEL DO GABARITO -->
                 <div class="painel-codigo">
                     <div class="cabecalho-painel">Gabarito</div>
-
                     <div class="conteudo-codigo" id="codigo-gabarito">
-                        <div class="linha-codigo"><span class="palavra-chave">#include</span> &lt;stdio.h&gt; </div>
-
-                        <div class="linha-codigo"></div>
-
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">soma_vetor</span>(<span class="palavra-chave">int</span> v[], <span
-                                class="palavra-chave">int</span> n) {
+                        <!-- MENSAGEM INICIAL -->
+                        <div style="color: var(--cor-texto-terciario); text-align: center; margin-top: 2rem;">
+                            <h2>Selecione um arquivo na barra lateral para visualizar o gabarito.</h2>
                         </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> total =
-                            <span class="numero">0</span>;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;total += v[i];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;} </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            total;
-                        </div>
-
-                        <div class="linha-codigo">}</div>
-
-                        <div class="linha-codigo"></div>
-
-                        <div class="linha-codigo"><span class="palavra-chave">int</span> <span
-                                class="funcao">main</span>(<span class="palavra-chave">void</span>) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> n;
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">scanf</span>(<span
-                                class="string">"%d"</span>, &amp;n);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">int</span> v[<span
-                                class="numero">100</span>];
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">for</span> (<span
-                                class="palavra-chave">int</span> i = <span class="numero">0</span>; i &lt; n; i++) {
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
-                                class="funcao">scanf</span>(<span class="string">"%d"</span>, &amp;v[i]);
-                        </div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
-
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="funcao">printf</span>(<span
-                                class="string">"%d\n"</span>, <span class="funcao">soma_vetor</span>(v, n));
-                        </div>
-                        <div class="linha-codigo">&nbsp;&nbsp;&nbsp;&nbsp;<span class="palavra-chave">return</span>
-                            <span class="numero">0</span>;
-                        </div>
-                        <div class="linha-codigo">}</div>
                     </div>
                 </div>
 
@@ -365,7 +316,7 @@
         </div>
     </div>
 
-<!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
+    <!-- MODAL DE INFORMAÇÕES SOBRE ESTRUTURA -->
     <div class="overlay-modal" id="modal-sobre">
         <div class="caixa-modal modal-instrucoes">
             <div class="titulo-modal">
@@ -374,20 +325,24 @@
             </div>
 
             <p class="descricao-modal">
-                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma pasta separada para os gabaritos da prova.
+                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
+                pasta separada para os gabaritos da prova.
             </p>
 
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">1. Pasta de Gabaritos (Obrigatório)</div>
                 <div class="texto-instrucao">
-                    O arquivo ZIP deve conter uma pasta chamada <code>gabaritos/</code>. Dentro dela, coloque as soluções esperadas para cada problema (ex.: <code>p01.c</code>, <code>p02.c</code>).
+                    O arquivo ZIP deve conter uma pasta chamada <code>gabaritos/</code>. Dentro dela, coloque as
+                    soluções esperadas para cada problema (ex.: <code>p01.c</code>, <code>p02.c</code>).
                 </div>
             </div>
 
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">2. Arquivos dos Alunos (Padrão de Nome)</div>
                 <div class="texto-instrucao">
-                    Os arquivos dos alunos podem estar organizados em pastas ou soltos no ZIP, mas <strong>precisam</strong> seguir o padrão: <code>a&lt;id&gt;q&lt;questao&gt;t&lt;tentativa&gt;.&lt;extensao&gt;</code>.<br>
+                    Os arquivos dos alunos podem estar organizados em pastas ou soltos no ZIP, mas
+                    <strong>precisam</strong> seguir o padrão:
+                    <code>a&lt;id&gt;q&lt;questao&gt;t&lt;tentativa&gt;.&lt;extensao&gt;</code>.<br>
                     Exemplo: <strong>a042820q02t01.c</strong>.
                 </div>
             </div>
@@ -395,29 +350,22 @@
             <div class="secao-instrucoes">
                 <div class="numero-instrucao">3. Cabeçalho de Metadados</div>
                 <div class="texto-instrucao">
-                    O sistema busca dados nas 15 primeiras linhas do arquivo do aluno. Use os marcadores de comentário da sua linguagem (<code>//</code>, <code>#</code>, etc).
+                    O sistema busca dados nas 15 primeiras linhas do arquivo do aluno. Use os marcadores de comentário
+                    da sua linguagem (<code>//</code>, <code>#</code>, etc).
                 </div>
             </div>
 
             <div class="estrutura-esperada">
                 prova-01.zip/
-                ├── gabaritos/           <-- Pasta obrigatória
-                │   ├── p01.c
-                │   └── p02.c
-                └── (Arquivos de alunos) <-- O sistema acha pelo nome
-                    ├── a042820q01t01.c      
-                    └── a042820q02t01.c
-                
-                // Exemplo de cabeçalho lido do aluno:
-                // Aluno: Ana Beatriz Lima 2823610045 (4735)
-                // Questao: 2, 1a tentativa, nota: 9.8
+                ├── gabaritos/ <-- Pasta obrigatória │ ├── p01.c │ └── p02.c └── (Arquivos de alunos) <-- O sistema acha
+                    pelo nome ├── a042820q01t01.c └── a042820q02t01.c // Exemplo de cabeçalho lido do aluno: // Aluno:
+                    Ana Beatriz Lima 2823610045 (4735) // Questao: 2, 1a tentativa, nota: 9.8 </div>
+
+                    <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
             </div>
-
-            <button class="botao" id="botao-fechar-instrucoes" style="margin-top: 1rem;">Entendi</button>
         </div>
-    </div>
-
-    <script src="{% static 'js/scripts.js' %}"></script>
+        <!-- Passa o dicionário de gabaritos gerado no Python para o JS de forma segura -->
+             {{ gabaritos|json_script:"dados-gabaritos" }}
+        <script src="{% static 'js/scripts.js' %}"></script>
 </body>
-
 </html>

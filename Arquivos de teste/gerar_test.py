@@ -1,14 +1,8 @@
 import zipfile
-import os
 
 # ============================================================
-# DADOS DO ALUNO
+# DADOS DA PROVA (comum a todos os alunos)
 # ============================================================
-
-nome_aluno = "Douglas de Oliveira Silva"
-matricula = "20421234"
-codigo_aluno = "4020"
-email = "douglas.oliveira@estudante.ufla.br"
 
 prova = "Prova 3 - Quinta 15"
 codigo_prova = "2669"
@@ -17,15 +11,40 @@ turma = "FP1 3A"
 semestre = "2026/1"
 
 # Nome do arquivo ZIP que será criado
-nome_zip = f"a{codigo_aluno}_programas.zip"
+nome_zip = "provas_alunos.zip"
 
 
 # ============================================================
-# QUESTÕES
+# QUESTÕES (mesmo padrão de questão para todos os alunos)
 # ============================================================
 # Para adicionar novas questões, basta copiar um bloco abaixo.
 
 questoes = [
+    {
+        "questao": "01",
+        "tentativa": "01",
+        "nota": "10",
+        "problema": "Leitura e impressão de dados",
+        "codigo_problema": "0000",
+        "justificativa": "Questão resolvida corretamente.",
+        "codigo": '''
+# Programa para ler o nome e a idade e exibir uma mensagem
+
+nome = input("Digite seu nome: ")
+idade = int(input("Digite sua idade: "))
+
+print(f"Olá, {nome}! Você tem {idade} anos.")
+''',
+        "gabarito": '''
+# Gabarito – Leitura e impressão de dados
+
+nome = input("Digite seu nome: ")
+idade = int(input("Digite sua idade: "))
+
+print(f"Olá, {nome}! Você tem {idade} anos.")
+'''
+    },
+
     {
         "questao": "02",
         "tentativa": "01",
@@ -53,6 +72,25 @@ print("\\nMatriz resultante:")
 
 for linha in matriz:
     print(*linha)
+''',
+        "gabarito": '''
+# Gabarito – Matriz Resultante de espaços vazios
+
+linhas = int(input("Digite o número de linhas: "))
+colunas = int(input("Digite o número de colunas: "))
+
+matriz = []
+
+for i in range(linhas):
+    linha = []
+    for j in range(colunas):
+        valor = input(f"Digite o valor [{i}][{j}]: ")
+        linha.append(valor)
+
+    matriz.append(linha)
+
+for linha in matriz:
+    print(*linha)
 '''
     },
 
@@ -65,6 +103,16 @@ for linha in matriz:
         "justificativa": "Questão resolvida corretamente.",
         "codigo": '''
 # Programa para somar dois números
+
+numero1 = float(input("Digite o primeiro número: "))
+numero2 = float(input("Digite o segundo número: "))
+
+soma = numero1 + numero2
+
+print("Resultado:", soma)
+''',
+        "gabarito": '''
+# Gabarito – Soma de números
 
 numero1 = float(input("Digite o primeiro número: "))
 numero2 = float(input("Digite o segundo número: "))
@@ -92,57 +140,92 @@ n3 = float(input("Digite a terceira nota: "))
 media = (n1 + n2 + n3) / 3
 
 print("Média:", media)
+''',
+        "gabarito": '''
+# Gabarito – Média de três números
+
+n1 = float(input("Digite a primeira nota: "))
+n2 = float(input("Digite a segunda nota: "))
+n3 = float(input("Digite a terceira nota: "))
+
+media = (n1 + n2 + n3) / 3
+
+print("Média:", media)
 '''
     }
 ]
 
 
 # ============================================================
-# CRIAÇÃO DOS ARQUIVOS
+# ALUNOS DE EXEMPLO (15 alunos)
+# ============================================================
+# Para adicionar mais alunos, basta copiar um bloco abaixo.
+
+alunos = [
+    {"nome": "Douglas de Oliveira Silva",   "matricula": "20421234", "codigo_aluno": "4020", "email": "douglas.oliveira@estudante.ufla.br"},
+    {"nome": "Ana Beatriz Souza Lima",      "matricula": "20421235", "codigo_aluno": "4021", "email": "ana.lima@estudante.ufla.br"},
+    {"nome": "Carlos Eduardo Ferreira",     "matricula": "20421236", "codigo_aluno": "4022", "email": "carlos.ferreira@estudante.ufla.br"},
+    {"nome": "Fernanda Costa Almeida",      "matricula": "20421237", "codigo_aluno": "4023", "email": "fernanda.almeida@estudante.ufla.br"},
+    {"nome": "Gabriel Henrique Rocha",      "matricula": "20421238", "codigo_aluno": "4024", "email": "gabriel.rocha@estudante.ufla.br"},
+    {"nome": "Isabela Martins Pereira",     "matricula": "20421239", "codigo_aluno": "4025", "email": "isabela.pereira@estudante.ufla.br"},
+    {"nome": "João Pedro Nascimento",       "matricula": "20421240", "codigo_aluno": "4026", "email": "joao.nascimento@estudante.ufla.br"},
+    {"nome": "Larissa Gomes Ribeiro",       "matricula": "20421241", "codigo_aluno": "4027", "email": "larissa.ribeiro@estudante.ufla.br"},
+    {"nome": "Matheus Barbosa Cardoso",     "matricula": "20421242", "codigo_aluno": "4028", "email": "matheus.cardoso@estudante.ufla.br"},
+    {"nome": "Natália Fernandes Dias",      "matricula": "20421243", "codigo_aluno": "4029", "email": "natalia.dias@estudante.ufla.br"},
+    {"nome": "Otávio Ramos Teixeira",       "matricula": "20421244", "codigo_aluno": "4030", "email": "otavio.teixeira@estudante.ufla.br"},
+    {"nome": "Patrícia Alves Monteiro",     "matricula": "20421245", "codigo_aluno": "4031", "email": "patricia.monteiro@estudante.ufla.br"},
+    {"nome": "Rafael Correia Batista",      "matricula": "20421246", "codigo_aluno": "4032", "email": "rafael.batista@estudante.ufla.br"},
+    {"nome": "Sofia Cavalcante Moreira",    "matricula": "20421247", "codigo_aluno": "4033", "email": "sofia.moreira@estudante.ufla.br"},
+    {"nome": "Thiago Melo Vasconcelos",     "matricula": "20421248", "codigo_aluno": "4034", "email": "thiago.vasconcelos@estudante.ufla.br"},
+]
+
+
+# ============================================================
+# CRIAÇÃO DO ZIP (direto na memória, sem gerar .py na pasta)
 # ============================================================
 
 arquivos_criados = []
 
-for questao in questoes:
+with zipfile.ZipFile(nome_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
 
-    # Monta o nome do arquivo
-    nome_arquivo = (
-        f"a{codigo_aluno}"
-        f"q{questao['questao']}"
-        f"t{questao['tentativa']}.py"
-    )
+    for aluno in alunos:
+        for questao in questoes:
 
-    # Cabeçalho
-    cabecalho = f'''# Aluno: {nome_aluno} {matricula} ({codigo_aluno})
+            # Monta o nome do arquivo
+            nome_arquivo = (
+                f"a{aluno['codigo_aluno']}"
+                f"q{questao['questao']}"
+                f"t{questao['tentativa']}.py"
+            )
+
+            # Cabeçalho
+            cabecalho = f'''# Aluno: {aluno["nome"]} {aluno["matricula"]} ({aluno["codigo_aluno"]})
 # Prova: {prova} ({codigo_prova})
 # Questao: {int(questao["questao"])}, {int(questao["tentativa"])}a tentativa, nota: {questao["nota"]}
 # Problema: {questao["problema"]} ({questao["codigo_problema"]})
-# Turma(s): {turma}, semestre: {semestre}, e-mail: {email}
+# Turma(s): {turma}, semestre: {semestre}, e-mail: {aluno["email"]}
 # Justificativa da nota: {questao["justificativa"]}
 
 '''
 
-    # Junta cabeçalho + código
-    conteudo = cabecalho + questao["codigo"].strip() + "\n"
+            # Junta cabeçalho + código
+            conteudo = cabecalho + questao["codigo"].strip() + "\n"
 
-    # Cria o arquivo .py
-    with open(nome_arquivo, "w", encoding="utf-8") as arquivo:
-        arquivo.write(conteudo)
+            # Escreve o conteúdo direto dentro do ZIP (sem criar .py em disco)
+            zipf.writestr(nome_arquivo, conteudo)
 
-    arquivos_criados.append(nome_arquivo)
+            arquivos_criados.append(nome_arquivo)
 
-
-# ============================================================
-# CRIAÇÃO DO ZIP
-# ============================================================
-
-with zipfile.ZipFile(nome_zip, "w", zipfile.ZIP_DEFLATED) as zipf:
-
-    for arquivo in arquivos_criados:
-        zipf.write(arquivo)
+    # ------------------------------------------------------------
+    # Pasta "gabarito" com o código correto de cada questão
+    # ------------------------------------------------------------
+    for questao in questoes:
+        nome_gabarito = f"gabarito/q{int(questao['questao'])}.py"
+        zipf.writestr(nome_gabarito, questao["gabarito"].strip() + "\n")
+        arquivos_criados.append(nome_gabarito)
 
 print("========================================")
-print("Arquivos criados:")
+print("Arquivos adicionados ao ZIP:")
 print("========================================")
 
 for arquivo in arquivos_criados:
@@ -151,13 +234,3 @@ for arquivo in arquivos_criados:
 print("\n========================================")
 print(f"Arquivo ZIP criado: {nome_zip}")
 print("========================================")
-
-
-# ============================================================
-# OPCIONAL: APAGAR OS .PY DEPOIS DE CRIAR O ZIP
-# ============================================================
-# Se quiser manter os arquivos .py, deixe comentado.
-# Se quiser apagar os .py e deixar somente o ZIP, remova o #.
-
-# for arquivo in arquivos_criados:
-#     os.remove(arquivo)
