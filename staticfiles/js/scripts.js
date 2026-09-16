@@ -104,19 +104,27 @@ function ativarSelecaoDeSubmissoes() {
             const justificativa = item.dataset.justificativa || '';
             const problema = item.dataset.problema || 'Problema não identificado';
             
-            // 3. Renderiza CÓDIGO DO ALUNO
+            // 3. Renderiza e Colore o CÓDIGO DO ALUNO
             const painelCodigo = document.getElementById('codigo-aluno');
             if (painelCodigo) {
-                painelCodigo.innerHTML =
-                    `<pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">${escaparParaExibicao(codigo)}</pre>`;
+                // Insere o texto puro
+                painelCodigo.textContent = codigo;
+                // Remove a marcação de 'já colorido' para forçar o JS a pintar de novo
+                delete painelCodigo.dataset.highlighted; 
+                // Manda o Highlight.js agir neste elemento
+                hljs.highlightElement(painelCodigo);
             }
 
-            // 4. Renderiza GABARITO (Busca no JSON pelo número da questão)
+            // 4. Renderiza e Colore o GABARITO
             const painelGabarito = document.getElementById('codigo-gabarito');
             if (painelGabarito) {
                 const gabaritoCodigo = gabaritos[questao] || `// Gabarito não encontrado para a Questão ${questao}.`;
-                painelGabarito.innerHTML = 
-                    `<pre style="white-space: pre-wrap; margin: 0; font-family: inherit;">${escaparParaExibicao(gabaritoCodigo)}</pre>`;
+                // Insere o texto puro
+                painelGabarito.textContent = gabaritoCodigo;
+                // Remove a marcação para pintar de novo
+                delete painelGabarito.dataset.highlighted;
+                // Colore o gabarito
+                hljs.highlightElement(painelGabarito);
             }
 
             // Atualiza Título
