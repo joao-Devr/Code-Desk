@@ -128,3 +128,16 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 LOGIN_URL = 'usuario:login'
+
+# ==========================================
+# CONFIGURAÇÕES DE SESSÃO (LOGIN)
+# ==========================================
+
+# 1. Encerra a sessão imediatamente se o usuário fechar o navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# 2. Define o tempo máximo da sessão em segundos (Ex: 2 horas = 7200 segundos)
+SESSION_COOKIE_AGE = 7200
+
+# 3. Renova o cronômetro a cada ação do usuário no site
+SESSION_SAVE_EVERY_REQUEST = True
