@@ -5,12 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeGrader - Correção de Código</title>
+    <title>Code Desk - Correção de Código</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{% static 'css/a11y-dark.css' %}"> -->
      
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
@@ -18,7 +18,7 @@
 <body>
     <!-- HEADER -->
     <header class="cabecalho">
-        <div class="logo-codegrader">📚 CodeGrader</div>
+        <div class="logo-code-desk">💻 Code Desk</div>
         <div class="botoes-autenticacao">
             <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
             {% if user.is_authenticated %}
@@ -321,7 +321,7 @@
             </div>
 
             <p class="descricao-modal">
-                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
+                O Code Desk processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
                 pasta separada para os gabaritos da prova.
             </p>
 
