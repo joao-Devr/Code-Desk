@@ -1,6 +1,7 @@
 import os
 import re
 import zipfile
+import tarfile
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -116,58 +117,73 @@ def _remover_cabecalho(conteudo, linhas_cabecalho):
     codigo = '\n'.join(linhas_corpo)
     return codigo.lstrip('\n')  # remove linhas em branco que sobraram no topo
 
-def _processar_zip(arquivo_zip):
-    
-    # Lê o .zip em memória e devolve (alunos_dados, erro).
+def _obter_arquivos(arquivo_obj):
+    """Lê os arquivos de dentro de um ZIP ou TAR.GZ e devolve (nome_caminho, conteudo_bytes)"""
+    nome_arquivo = arquivo_obj.name.lower()
+    # Segurança: tamanho do arquivo
+    if nome_arquivo.endswith('.zip'):
+        with zipfile.ZipFile(arquivo_obj, 'r') as z:
+            infos = z.infolist()
+            if len(infos) > MAX_ARQUIVOS_NO_ZIP:
+                raise ValueError(f'O arquivo tem {len(infos)} itens, acima do limite.')
+            if sum(info.file_size for info in infos) > TAMANHO_MAX_DESCOMPACTADO:
+                raise ValueError('O conteúdo é grande demais depois de descompactado.')
+            for info in infos:
+                if info.filename.endswith('/'): continue
+                with z.open(info.filename) as f:
+                    yield info.filename, f.read()
+    else:
+        # Assume que é .tgz ou .tar.gz
+        with tarfile.open(fileobj=arquivo_obj, mode='r:gz') as t:
+            infos = t.getmembers()
+            if len(infos) > MAX_ARQUIVOS_NO_ZIP:
+                raise ValueError(f'O pacote tem {len(infos)} itens, acima do limite.')
+            if sum(info.size for info in infos) > TAMANHO_MAX_DESCOMPACTADO:
+                raise ValueError('O conteúdo do pacote é grande demais.')
+            for info in infos:
+                if info.isdir(): continue
+                f = t.extractfile(info)
+                if f is not None:
+                    yield info.name, f.read()
+
+
+def _processar_pacote(arquivo_enviado):
+    """Substitui o antigo _processar_zip e analisa o código recebido"""
     alunos_dados = {}
     gabaritos_dados = {}
-    with zipfile.ZipFile(arquivo_zip, 'r') as z:
 
-        # Valida METADADOS antes de descompactar qualquer coisa
-
-        infos = z.infolist()
-
-        if len(infos) > MAX_ARQUIVOS_NO_ZIP:
-            return None, f'O .zip tem {len(infos)} itens, acima do limite de {MAX_ARQUIVOS_NO_ZIP}.'
-
-        tamanho_total = sum(info.file_size for info in infos)
-        if tamanho_total > TAMANHO_MAX_DESCOMPACTADO:
-            return None, 'O conteúdo do .zip é grande demais depois de descompactado.'
-
-        for nome_caminho in z.namelist():
-            if nome_caminho.endswith('/'):
-                continue  # é uma pasta, não um arquivo
-
+    try:
+        # Lê todos os arquivos do pacote e organiza por aluno e questão
+        for nome_caminho, bruto in _obter_arquivos(arquivo_enviado):
             nome_arquivo = os.path.basename(nome_caminho)
 
-            # Verifica se o arquivo está dentro de uma pasta chamada 'gabarito' ou 'gabaritos'
+            # Verifica se é gabarito
             pasta_pai = os.path.basename(os.path.dirname(nome_caminho)).lower()
             if pasta_pai in ['gabarito', 'gabaritos']:
                 m_gab = PADRAO_GABARITO.match(nome_arquivo)
                 if m_gab:
                     questao_gab = m_gab.group('questao').zfill(2)
-                    with z.open(nome_caminho) as f:
-                        try:
-                            conteudo_gab = f.read().decode('utf-8')
-                        except UnicodeDecodeError:
-                            conteudo_gab = f.read().decode('latin-1', errors='ignore')
+                    try:
+                        conteudo_gab = bruto.decode('utf-8')
+                    except UnicodeDecodeError:
+                        conteudo_gab = bruto.decode('latin-1', errors='ignore')
                     gabaritos_dados[questao_gab] = conteudo_gab
-                continue # Pula para o próximo arquivo (não processa o gabarito como aluno)
+                continue 
 
+            # Verifica se é arquivo de código válido
             _, extensao = os.path.splitext(nome_arquivo)
             if extensao.lower() not in EXTENSOES_SUPORTADAS:
                 continue
 
             m = PADRAO_NOME_ARQUIVO.match(nome_arquivo)
             if not m:
-                continue  # não segue o padrão axxxxxqyytzz.ext -> ignora
+                continue  
 
             id_curto_nome = m.group('id_curto')
             questao_nome = m.group('questao').zfill(2)
             tentativa_nome = m.group('tentativa').zfill(2)
 
-            with z.open(nome_caminho) as f:
-                bruto = f.read()
+            # Decodifica o conteúdo do arquivo, tentando UTF-8 e depois Latin-1
             try:
                 conteudo = bruto.decode('utf-8')
             except UnicodeDecodeError:
@@ -176,12 +192,11 @@ def _processar_zip(arquivo_zip):
             cabecalho, linhas_cabecalho = _analisar_cabecalho(conteudo)
             codigo_sem_cabecalho = _remover_cabecalho(conteudo, linhas_cabecalho)
 
-            # Prioriza os dados do cabeçalho (mais completos); usa o nome do
-            # arquivo como reserva quando o cabeçalho não pôde ser lido.
-
+            # Se não houver cabeçalho, ainda assim usamos os dados do nome do arquivo
             id_curto = (cabecalho['id_curto'] or id_curto_nome).lstrip('0') or '0'
             questao = cabecalho['questao'] or questao_nome
             tentativa = cabecalho['tentativa'] or tentativa_nome
+            # Se o cabeçalho tiver campos conflitantes com o nome do arquivo, damos preferência ao cabeçalho
 
             if id_curto not in alunos_dados:
                 alunos_dados[id_curto] = {
@@ -191,8 +206,6 @@ def _processar_zip(arquivo_zip):
                     'arquivos': [],
                 }
             elif cabecalho['nome'] and alunos_dados[id_curto]['nome'].startswith('Aluno '):
-
-                # Se um arquivo anterior não tinha cabeçalho legível mas este tem, atualiza o nome
                 alunos_dados[id_curto]['nome'] = cabecalho['nome']
 
             alunos_dados[id_curto]['arquivos'].append({
@@ -204,17 +217,15 @@ def _processar_zip(arquivo_zip):
                 'nota_dredd': cabecalho['nota'] or '',
                 'justificativa': cabecalho['justificativa'] or '',
             })
+    except ValueError as e:
+        return None, None, str(e)
 
-    for aluno in alunos_dados.values():
-        aluno['arquivos'].sort(key=lambda item: (item['questao'], item['tentativa']))
-
-    # Descobre o total de questões da prova baseado na quantidade de gabaritos
+    # Cálculo da nota final
     total_questoes_prova = len(gabaritos_dados)
 
     for aluno in alunos_dados.values():
         aluno['arquivos'].sort(key=lambda item: (item['questao'], item['tentativa']))
         
-        # Pega a maior nota de cada questão (útil se houver mais de uma tentativa da mesma questão)
         notas_por_questao = {}
         for arq in aluno['arquivos']:
             q = arq['questao']
@@ -226,22 +237,16 @@ def _processar_zip(arquivo_zip):
                 except ValueError:
                     pass
             
-            # Atualiza se for a primeira vez vendo a questão ou se a nota for maior
             if q not in notas_por_questao or n_val > notas_por_questao[q]:
                 notas_por_questao[q] = n_val
         
         soma_notas = sum(notas_por_questao.values())
-        
-        # O divisor é o total de gabaritos. Se não houver gabaritos enviados, divide pelo total de questões enviadas pelo aluno.
         divisor = total_questoes_prova if total_questoes_prova > 0 else max(len(notas_por_questao), 1)
-        
         media = soma_notas / divisor
-        
-        # Formata com 1 casa decimal (ex: 66.666... vira 66.7)
         aluno['nota_final'] = f"{media:.1f}"
 
     if not alunos_dados:
-        return None, None, 'Nenhum arquivo no padrão axxxxxqyytzz.ext foi encontrado no .zip.'
+        return None, None, 'Nenhum arquivo no padrão esperado foi encontrado.'
 
     return alunos_dados, gabaritos_dados, None
 
@@ -252,21 +257,22 @@ def codedesk(request):
 
     if request.method == 'POST' and request.FILES.get('arquivo_zip'):
         arquivo_zip = request.FILES['arquivo_zip']
+        nome_arquivo = arquivo_zip.name.lower()
 
-        # Segurança: extensão do arquivo enviado
-        if not arquivo_zip.name.lower().endswith('.zip'):
-            contexto['erro'] = "Apenas arquivos .zip são permitidos."
+        # Segurança: extensões permitidas
+        if not (nome_arquivo.endswith('.zip') or nome_arquivo.endswith('.tgz') or nome_arquivo.endswith('.tar.gz')):
+            contexto['erro'] = "Apenas arquivos .zip, .tgz ou .tar.gz são permitidos."
             return render(request, 'CodeDesk.html', contexto)
 
-        # Segurança: tamanho do arquivo enviado (antes mesmo de abrir o zip)
+        # Segurança: tamanho do arquivo
         if arquivo_zip.size > TAMANHO_MAX_ZIP:
             contexto['erro'] = f"Arquivo maior que o limite de {TAMANHO_MAX_ZIP // (1024 * 1024)} MB."
             return render(request, 'CodeDesk.html', contexto)
 
         try:
-            alunos_dados, gabaritos_dados, erro = _processar_zip(arquivo_zip)
-        except zipfile.BadZipFile:
-            contexto['erro'] = "O arquivo enviado está corrompido ou não é um ZIP válido."
+            alunos_dados, gabaritos_dados, erro = _processar_pacote(arquivo_zip)
+        except (zipfile.BadZipFile, tarfile.ReadError):
+            contexto['erro'] = "O arquivo enviado está corrompido ou não é um pacote válido."
             return render(request, 'CodeDesk.html', contexto)
 
         if erro:

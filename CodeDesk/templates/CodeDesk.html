@@ -5,12 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeGrader - Correção de Código</title>
+    <title>Code Desk - Correção de Código</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- <link rel="stylesheet" href="{% static 'css/a11y-dark.css' %}"> -->
      
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/favicon.svg' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 </head>
@@ -18,7 +18,7 @@
 <body>
     <!-- HEADER -->
     <header class="cabecalho">
-        <div class="logo-codegrader">📚 CodeGrader</div>
+        <div class="logo-code-desk">💻 Code Desk</div>
         <div class="botoes-autenticacao">
             <button class="botao botao-secundario" id="botao-sobre">Sobre</button>
             {% if user.is_authenticated %}
@@ -62,14 +62,14 @@
                         {% csrf_token %}
 
                         <div class="grupo-formulario" style="margin-bottom: 0;">
-                            <label for="arquivo_zip" class="rotulo-campo">Arquivo .zip da prova:</label>
+                            <label for="arquivo_zip" class="rotulo-campo">Arquivo  da prova:</label>
 
-                            <input type="file" name="arquivo_zip" id="arquivo_zip" accept=".zip" required
-                                class="campo-entrada" style="padding: 0.5rem; cursor: pointer;">
+                            <input type="file" name="arquivo_zip" id="arquivo_zip" accept=".zip, .tgz, .tar.gz"
+                             required class="campo-entrada" style="padding: 0.5rem; cursor: pointer;">
                         </div>
 
                         <!-- O botão principal azul do site -->
-                        <button type="submit" class="botao">Processar ZIP</button>
+                        <button type="submit" class="botao">Processar</button>
                     </form>
                 </div>
                 {% else %}
@@ -137,7 +137,7 @@
                 <div class="valor-info" id="nome-usuario">{{dados_aluno.nome}}</div>
 
                 <div class="label-info">Matrícula</div>
-                <div class="valor-info" id="matricula-usuario">{{dados_aluno.}}</div>
+                <div class="valor-info" id="matricula-usuario">{{dados_aluno.matricula}}</div>
 
                 <div class="label-info">Turma</div>
                 <div class="valor-info" id="turma-usuario">{{dados_aluno.turma}}</div>
@@ -197,7 +197,6 @@
                     <div class="abas-analise">
                         <div class="aba ativa" data-aba="alertas">Alertas</div>
                         <div class="aba" data-aba="comandos">Comandos Proibidos</div>
-                        <div class="aba" data-aba="historico">Histórico de Plágio</div>
                     </div>
 
                     <!-- ABA ALERTAS -->
@@ -214,13 +213,6 @@
                         </div>
                     </div>
 
-                    <!-- ABA HISTÓRICO -->
-                    <div id="historico" class="conteudo-aba">
-                        <div class="alerta-vazio">
-                            Sem histórico de plágio.
-                        </div>
-                    </div>
-
                     <!-- PAINEL DE NOTAS -->
                     <div class="painel-notas">
                         <div class="secao-nota">
@@ -229,14 +221,8 @@
                         </div>
 
                         <div class="secao-nota">
-                            <div class="titulo-nota">Nota Manual</div>
-                            <input type="number" class="campo-nota" id="nota-manual-input" placeholder="—" min="0"
-                                max="10" step="0.1">
-                        </div>
-
-                        <div class="secao-nota">
                             <div class="titulo-nota">Nota Final</div>
-                            <div class="caixa-notas" id="caixa-nota-final">-</div>
+                            <input type="number" class="campo-nota" id="nota-final-input" placeholder="—" min="0" max="10" step="0.1">
                         </div>
 
                         <div class="secao-nota">
@@ -335,7 +321,7 @@
             </div>
 
             <p class="descricao-modal">
-                O CodeGrader processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
+                O Code Desk processa as submissões lendo os nomes e cabeçalhos dos arquivos dos alunos, mas exige uma
                 pasta separada para os gabaritos da prova.
             </p>
 

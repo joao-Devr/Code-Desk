@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fundo escuro com bordas arredondadas -->
+  <rect width="64" height="64" rx="16" fill="#1e293b"/>
+  <!-- Símbolo de menor ( < ) -->
+  <path d="M24 20 L10 32 L24 44" fill="none" stroke="#4ade80" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Símbolo de maior ( > ) -->
+  <path d="M40 20 L54 32 L40 44" fill="none" stroke="#4ade80" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Barra de divisão ( / ) -->
+  <path d="M36 14 L28 50" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round"/>
+</svg>

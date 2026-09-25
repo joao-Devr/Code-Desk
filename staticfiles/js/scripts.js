@@ -145,42 +145,47 @@ function ativarSelecaoDeSubmissoes() {
             const notaUsuario = document.getElementById('nota-usuario');
             if (notaUsuario) notaUsuario.textContent = notaFinalAluno;
 
-            // Preenche Notas
+            // Preenche Notas e Justificativa
             const caixaNotaDredd = document.getElementById('caixa-nota-dredd');
             if (caixaNotaDredd) caixaNotaDredd.textContent = notaDredd || '—';
+            
+            // Busca a nota e justificativa que o professor digitou (ou deixa em branco)
+            const notaFinalSalva = item.dataset.notaFinalPreenchida || '';
+            const justificativaSalva = item.dataset.justificativaPreenchida || justificativa;
+
+            const notaFinalInput = document.getElementById('nota-final-input');
+            if (notaFinalInput) notaFinalInput.value = notaFinalSalva;
+
             const justificativaInput = document.getElementById('justificativa-correcao');
-            if (justificativaInput) justificativaInput.value = justificativa;
+            if (justificativaInput) justificativaInput.value = justificativaSalva;
 
             atualizarNotaFinal();
         });
     });
 }
 
+// ===== FUNCIONALIDADE DO PAINEL DE NOTAS (SALVAMENTO TEMPORÁRIO) =====
 
-// ===== FUNCIONALIDADE DO PAINEL DE NOTAS =====
-function atualizarNotaFinal() {
-    const caixaNotaDredd = document.getElementById('caixa-nota-dredd');
-    const notaManualInput = document.getElementById('nota-manual-input');
-    const caixaNotaFinal = document.getElementById('caixa-nota-final');
-
-    const notaDredd = parseFloat(caixaNotaDredd?.textContent) || 0;
-    const notaManual = parseFloat(notaManualInput?.value);
-
-    if (caixaNotaFinal) {
-        caixaNotaFinal.textContent = isNaN(notaManual)
-            ? notaDredd.toFixed(1)
-            : ((notaDredd + notaManual) / 2).toFixed(1);
+// Salva a Nota Final digitada na barra lateral em tempo real
+document.getElementById('nota-final-input')?.addEventListener('input', (e) => {
+    const submissaoAtiva = document.querySelector('.item-submissao.ativo');
+    if (submissaoAtiva) {
+        submissaoAtiva.dataset.notaFinalPreenchida = e.target.value;
     }
-}
+});
 
-// Recalcula a nota quando o professor digitar
-document.getElementById('nota-manual-input')?.addEventListener('input', atualizarNotaFinal);
+// Salva a Justificativa digitada na barra lateral em tempo real
+document.getElementById('justificativa-correcao')?.addEventListener('input', (e) => {
+    const submissaoAtiva = document.querySelector('.item-submissao.ativo');
+    if (submissaoAtiva) {
+        submissaoAtiva.dataset.justificativaPreenchida = e.target.value;
+    }
+});
 
-// Lógica de Salvar a Avaliação
+// Lógica de Enviar a Avaliação (Botão Salvar)
 const botaoSalvar = document.querySelector('.painel-notas .botao');
 if (botaoSalvar) {
     botaoSalvar.addEventListener('click', () => {
-        // Busca a submissão selecionada atualmente
         const submissaoAtiva = document.querySelector('.item-submissao.ativo');
 
         if (!submissaoAtiva) {
@@ -189,20 +194,20 @@ if (botaoSalvar) {
         }
 
         const idSubmissao = submissaoAtiva.dataset.idSubmissao;
-        const notaManualInput = document.getElementById('nota-manual-input');
+        const notaFinalInput = document.getElementById('nota-final-input');
         const justificativaInput = document.getElementById('justificativa-correcao');
 
-        const notaManual = parseFloat(notaManualInput?.value);
+        const notaFinal = parseFloat(notaFinalInput?.value);
         const justificativa = justificativaInput?.value;
 
-        if (isNaN(notaManual)) {
-            alert('Por favor, preencha a nota manual com um valor numérico.');
+        if (isNaN(notaFinal)) {
+            alert('Por favor, preencha a Nota Final com um valor numérico.');
             return;
         }
 
         console.log('Correção pronta para ser enviada ao backend:', {
             id_submissao: idSubmissao,
-            nota_manual: notaManual,
+            nota_final: notaFinal,
             justificativa: justificativa
         });
 
@@ -218,7 +223,6 @@ function configurarBotoesNavegacao() {
     if (!btnAnterior || !btnProximo) return;
 
     function navegarMesmaQuestao(direcao) {
-        // Pega o item que está selecionado no momento
         const itemAtivo = document.querySelector('.item-submissao.ativo');
         
         if (!itemAtivo) {
@@ -226,10 +230,7 @@ function configurarBotoesNavegacao() {
             return;
         }
 
-        // Descobre qual é a questão atual (ex: "01" ou "02")
         const questaoAtual = itemAtivo.dataset.questao;
-        
-        // Busca TODOS os itens na barra lateral que são dessa mesma questão
         const itensMesmaQuestao = Array.from(document.querySelectorAll(`.item-submissao[data-questao="${questaoAtual}"]`));
         
         if (itensMesmaQuestao.length <= 1) {
@@ -237,7 +238,6 @@ function configurarBotoesNavegacao() {
             return;
         }
 
-        // Encontra a posição do aluno atual na lista
         const indexAtual = itensMesmaQuestao.indexOf(itemAtivo);
         let novoIndex;
 
@@ -257,13 +257,11 @@ function configurarBotoesNavegacao() {
 
         const novoItem = itensMesmaQuestao[novoIndex];
 
-        // Se o aluno estiver dentro de uma "pasta" fechada, abre a pasta automaticamente
         const grupo = novoItem.closest('.grupo-aluno');
         if (grupo && !grupo.classList.contains('aberto')) {
             grupo.classList.add('aberto');
         }
 
-        // Simula o clique no novo aluno e rola a barra lateral
         novoItem.click();
         novoItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -276,5 +274,5 @@ function configurarBotoesNavegacao() {
 document.addEventListener('DOMContentLoaded', function () {
     ativarSelecaoDeSubmissoes();
     ativarPastasDeAlunos();
-    configurarBotoesNavegacao(); // Ativa os botões
-});
+    configurarBotoesNavegacao();
+}); 
